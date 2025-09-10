@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=eval_model
+#SBATCH --job-name=preprocess
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=4
 #SBATCH --ntasks=4
 #SBATCH --time=23:58:00
 #SBATCH -p compute_full_node
-#SBATCH --output=../logs/slurm-%j.out
-#SBATCH --error=../logs/slurm-%j.err
+#SBATCH --output=../logs/preprocess-%j.out
+#SBATCH --error=../logs/preprocess-%j.err
 
 
 module load anaconda3
