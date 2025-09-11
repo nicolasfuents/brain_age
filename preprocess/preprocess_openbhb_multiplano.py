@@ -12,12 +12,23 @@ from tqdm import tqdm
 # -------------------------------
 # CONFIGURACIÓN
 # -------------------------------
-DATA_ROOT = "/home/nfuentes/brain_age_project/data"
+SCRATCH = os.environ.get("SCRATCH", "/gpfs/fs0/scratch/m/mchakrav/nfuentes")
+
+# Solo LECTURA de datos (puede quedar en /home si tus .npy están allí)
+DATA_ROOT = "/home/m/mchakrav/nfuentes/scratch/brain_age_project/openBHB_dataset/data"
+
+
+# ESCRITURA en SCRATCH
+OUTPUT_DIR  = os.path.join(SCRATCH, "brain_age_project", "data", "processed_3_slices")
+ID_LISTS_DIR = os.path.join(SCRATCH, "brain_age_project", "scripts", "IDs")
+
 SPLITS = ["train", "val"]
-OUTPUT_DIR = os.path.join(DATA_ROOT, "processed")
 PLANES = ["axial", "coronal", "sagittal"]
-NUM_CORTES = 5
-ID_LISTS_DIR = "/home/nfuentes/brain_age_project/scripts/IDs"
+NUM_CORTES = 3
+
+LOG_DIR = os.path.join(SCRATCH, "brain_age_project", "openBHB_dataset", "scripts", "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+CORTES_LOG = os.path.join(LOG_DIR, "cortes_descartados.log")
 
 for plane in PLANES:
     os.makedirs(os.path.join(OUTPUT_DIR, plane), exist_ok=True)
