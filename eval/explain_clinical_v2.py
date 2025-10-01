@@ -27,6 +27,8 @@ from collections import defaultdict
 from typing import Dict
 from matplotlib import colormaps as cmaps
 from skimage import measure
+from PIL import Image
+import imageio.v2 as imageio
 
 # === Importar tu modelo desde el root del repo ===
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -113,6 +115,22 @@ def _add_orient_labels(ax, plane):
     ax.text(0.50, 0.98, lbl["top"],   transform=ax.transAxes, va="top", ha="center",
             fontsize=11, color="white", fontweight="bold",
             bbox=dict(facecolor="black", alpha=0.35, edgecolor="none", pad=2.5))
+
+def _to_uint8(x):
+    x = np.asarray(x, dtype=np.float32)
+    x = x - np.nanmin(x)
+    m = np.nanmax(x)
+    if m > 0: x = x / m
+    return (x*255.0 + 0.5).clip(0,255).astype(np.uint8)
+
+def _save_gif(frames_paths, out_gif, fps=12):
+    imgs = [imageio.imread(p) for p in frames_paths if os.path.exists(p)]
+    if imgs:
+        imageio.mimsave(out_gif, imgs, fps=fps, loop=0)
+
+def _scale_fixed01(x, vmin, vmax):
+    x = np.asarray(x, np.float32)
+    return np.clip((x - vmin) / (max(vmax - vmin, 1e-8)), 0, 1)
 
 
 # --- cache de atlas ---
@@ -320,7 +338,8 @@ def gradcam_signed(model, image, which="global"):
         h1.remove(); h2.remove()
 
 # -------------------- IG firmado --------------------
-def integrated_gradients_signed(model, image, steps=50, which="global", baseline="mean"):
+def integrated_gradients_signed(model, image, steps=50, which="global", baseline="mean",
+                                return_frames=False, base_for_overlay=None, mask_2d=None, plane="axial", alpha_overlay=0.45):
     model.eval()
     img = image.detach()
     if baseline == "zero":
@@ -329,21 +348,60 @@ def integrated_gradients_signed(model, image, steps=50, which="global", baseline
         base = img.mean(dim=(-2,-1), keepdim=True).expand_as(img)
     else:
         base = torch.zeros_like(img)
+
+    
     alphas = torch.linspace(0, 1, steps, device=img.device)
     total = torch.zeros_like(img)
-    for a in alphas:
+    frames = []  # cada entrada: dict(alpha, x_np, ig_map_np)
+
+    for i, a in enumerate(alphas):
         x = (base + a * (img - base)).clone().detach().requires_grad_(True)
         score = _score_scalar(model, x, which=("global" if which!="local" else "local"))
         model.zero_grad(set_to_none=True)
         score.backward(retain_graph=False)
         if x.grad is not None:
             total += x.grad
+
+        if return_frames:
+            # IG acumulado hasta el step i
+            avg_grad = total / float(i+1)
+            ig_now = ((img - base) * avg_grad).sum(dim=1)[0]  # (H,W)
+            m = ig_now.abs().max()
+            if m > 0: ig_now = ig_now / m
+            ig_np = ig_now.detach().cpu().numpy()
+
+            # base para overlay: toma el canal central si no se pasó uno
+            if base_for_overlay is None:
+                base_for_overlay_np = _to_numpy01(img[0, img.shape[1]//2:img.shape[1]//2+1].detach().cpu())[0]
+            else:
+                base_for_overlay_np = base_for_overlay
+
+            # máscara opcional
+            if mask_2d is not None:
+                msk = (mask_2d > 0).astype(np.float32)
+                base_show = base_for_overlay_np * msk
+            else:
+                base_show = base_for_overlay_np
+
+            frames.append({
+            "alpha": float(a.item()),
+            "x_raw": x.detach().cpu()[0, x.shape[1]//2].numpy(), 
+            "ig_map": ig_np,
+            "base_np": base_show
+        })
+
+
     avg_grad = total / max(1, len(alphas))
-    ig = (img - base) * avg_grad          # (1,C,H,W)
-    ig_map = ig.sum(dim=1)[0]             # firmado (H,W)
+    ig = (img - base) * avg_grad
+    ig_map = ig.sum(dim=1)[0]
     m = ig_map.abs().max()
     if m > 0: ig_map = ig_map / m
-    return ig_map.detach().cpu().squeeze().numpy()
+    ig_np = ig_map.detach().cpu().squeeze().numpy()
+
+    if return_frames:
+        return ig_np, frames
+    return ig_np
+
 
 # -------------------- Occlusion firmado --------------------
 @torch.no_grad()
@@ -618,8 +676,45 @@ def run_for_plane(plane, args, subject_id, ensemble_title=None):
     use_mask = (not args.no_mask)
 
     # --------- IG firmado ----------
-    ig = integrated_gradients_signed(model, image, steps=args.ig_steps,
-                                     which="global", baseline=args.ig_baseline)
+    base_mid = image.detach().float().cpu()[0, image.shape[1]//2].numpy()
+
+    if args.ig_record_steps:
+        ig_dir = os.path.join(outdir, "ig_steps"); os.makedirs(ig_dir, exist_ok=True)
+        ig_map, frames = integrated_gradients_signed(
+            model, image, steps=args.ig_steps, which="global", baseline=args.ig_baseline,
+            return_frames=True, base_for_overlay=base_mid, mask_2d=mask_mid, plane=plane, alpha_overlay=args.alpha
+        )
+        
+        # escala fija tomada del slice medio de la entrada final
+        mid = image.shape[1]//2
+        ref = image.detach().cpu()[0, mid].numpy()
+        vmin, vmax = np.percentile(ref, [1, 99])  # o usa ref.min(), ref.max()
+
+
+        input_frames_paths, overlay_frames_paths = [], []
+        for k, f in enumerate(frames):
+            p_in = os.path.join(ig_dir, f"input_step_{k:03d}.png")
+            x_vis = _scale_fixed01(f["x_raw"], vmin, vmax)          # ya está en [0,1] con escala fija
+            arr = (_apply_display_orient(x_vis, plane) * 255.0 + 0.5).clip(0,255).astype(np.uint8)
+            Image.fromarray(arr).save(p_in)
+            input_frames_paths.append(p_in)
+
+            p_ov = os.path.join(ig_dir, f"overlay_step_{k:03d}.png")
+            _overlay_and_save(f["base_np"], f["ig_map"], p_ov, alpha=args.alpha,
+                              title=None, show_colorbar=False, cmap="seismic", vmin=-1, vmax=1,
+                              mask_2d=mask_mid, apply_mask=(not args.no_mask))
+            overlay_frames_paths.append(p_ov)
+
+        if args.ig_gif_kind in ("input","both"):
+            _save_gif(input_frames_paths, os.path.join(ig_dir, f"ig_input_{args.ig_steps}steps.gif"), fps=args.ig_gif_fps)
+        if args.ig_gif_kind in ("overlay","both"):
+            _save_gif(overlay_frames_paths, os.path.join(ig_dir, f"ig_overlay_{args.ig_steps}steps.gif"), fps=args.ig_gif_fps)
+
+        ig = ig_map
+    else:
+        ig = integrated_gradients_signed(model, image, steps=args.ig_steps, which="global", baseline=args.ig_baseline)
+
+
     np.save(os.path.join(outdir, "ig.npy"), ig)
     for base_i, lab in zip(bases, labels):
         _overlay_and_save(base_i, ig, os.path.join(outdir, f"ig_{lab}.png"), alpha=args.alpha,
@@ -774,6 +869,11 @@ def main():
     # IG
     ap.add_argument("--ig-steps", type=int, default=50)
     ap.add_argument("--ig-baseline", choices=["zero","mean"], default="mean")
+    ap.add_argument("--ig-record-steps", action="store_true",
+                    help="Guarda frames por step desde el baseline hasta la entrada y genera GIF")
+    ap.add_argument("--ig-gif-fps", type=int, default=12, help="FPS del GIF de IG")
+    ap.add_argument("--ig-gif-kind", choices=["input","overlay","both"], default="overlay",
+                    help="input: solo interpolación; overlay: IG acumulado sobre base; both: dos GIFs")
 
     # Occlusion
     ap.add_argument("--occ-patch", type=int, default=32)
@@ -790,6 +890,8 @@ def main():
 
     ap.add_argument("--topk", type=int, default=10)
     ap.add_argument("--no-mask", action="store_true", help="Desactiva el enmascarado de PNGs finales")
+
+
 
     args = ap.parse_args()
 
