@@ -40,6 +40,7 @@ parser.add_argument("--seed", type=int, default=42, help="Semilla aleatoria para
 parser.add_argument("--aug_rot", type=float, default=10.0, help="Grados de rotación")
 parser.add_argument("--aug_noise", type=float, default=0.01, help="Sigma del ruido")
 parser.add_argument("--lr", type=float, default=1e-4, help="Learning Rate máximo")
+parser.add_argument("--patience", type=int, default=40, help="Épocas de paciencia para Early Stopping")
 args = parser.parse_args()
 
 # CONSTANTES FIJAS
@@ -104,13 +105,9 @@ class BrainAgeDataset(Dataset):
         with open(ids_file, "r") as f:
             raw_ids = [line.strip() for line in f.readlines() if line.strip()]
             
-        if self.mode == 'train':
-            # Filtramos cualquier ID que contenga "OAS" (OASIS3) para el entrenamiento
-            self.ids = [subj_id for subj_id in raw_ids if "OAS" not in subj_id]
-            print(f"[{self.mode.upper()}] Excluyendo OASIS3. Sujetos finales: {len(self.ids)}")
-        else:
-            self.ids = raw_ids
-            print(f"[{self.mode.upper()}] Sujetos totales: {len(self.ids)}")
+        # Filtramos cualquier ID de OASIS3 sistemáticamente (Zero-Shot para test externo)
+        self.ids = [subj_id for subj_id in raw_ids if "OAS" not in subj_id]
+        print(f"[{self.mode.upper()}] OASIS3 excluido. Sujetos cargados: {len(self.ids)}")
 
     def __len__(self): return len(self.ids)
 
@@ -120,7 +117,7 @@ class BrainAgeDataset(Dataset):
 
     def __getitem__(self, idx):
         try:
-            sample = torch.load(self._get_path(self.ids[idx]))
+            sample = torch.load(self._get_path(self.ids[idx]), weights_only=False)
             img = sample["image"].float()
             age_raw = sample["age"]
             age = float(age_raw.item() if isinstance(age_raw, torch.Tensor) else age_raw)
@@ -163,7 +160,7 @@ def train_routine(plane):
         "BATCH_SIZE": BATCH_SIZE,
         "NUM_EPOCHS": NUM_EPOCHS,
         "LEARNING_RATE": MAX_LR,
-        "PATIENCE": "None (Fixed Epochs)",
+        "PATIENCE": args.patience,
         "SEED": SEED,
         "PATCH_SIZE": PATCH_SIZE,
         "STEP": STEP,
@@ -216,6 +213,7 @@ def train_routine(plane):
         criterion = nn.L1Loss()
 
     best_mae = float('inf')
+    epochs_without_improvement = 0
 
     for epoch in range(NUM_EPOCHS):
         model.train()
@@ -225,8 +223,17 @@ def train_routine(plane):
         grads_list = []
         
         for i, (imgs, labels, ages_real) in enumerate(train_dl):
+            # 1. MANDAR DATOS A LA GPU Y LIMPIAR GRADIENTES (¡Esto se había borrado!)
             imgs, labels, ages_real = imgs.to(DEVICE), labels.to(DEVICE), ages_real.to(DEVICE)
             optimizer.zero_grad()
+
+            # 2. LOGUEAR IMÁGENES AL TENSORBOARD
+            if i == 0 and epoch % 5 == 0:  # Solo el primer batch cada 5 épocas
+                # Selecciona el slice central del parche inplace (idx 2) y agrega canal (B, 1, H, W)
+                img_grid = imgs[:4, 2:3, :, :] 
+                writer.add_images('Inputs/Augmented_Center_Slice', img_grid, epoch)
+            
+            # 3. FORWARD PASS
             outputs = model(imgs)
             loss = 0
             w_losses = [1.0] + [0.5] * (len(outputs) - 1)
@@ -267,6 +274,13 @@ def train_routine(plane):
             for imgs, labels, ages_real in val_dl:
                 imgs, labels, ages_real = imgs.to(DEVICE), labels.to(DEVICE), ages_real.to(DEVICE)
                 outputs = model(imgs)
+                
+                # --- NUEVO: Registro de Distribución Softmax ---
+                # Condición: Solo primer batch (val_count == 0), modelo soft, cada 5 épocas
+                if val_count == 0 and args.loss_type == 'soft' and epoch % 5 == 0:
+                    # outputs[0] es la salida de la rama global. [0] toma el primer sujeto del batch.
+                    prob_dist = F.softmax(outputs[0][0], dim=0) 
+                    writer.add_histogram('Predictions/Softmax_Distribution', prob_dist, epoch)
                 
                 # ENSEMBLE: Global + Locales
                 batch_preds_list = []
@@ -317,12 +331,24 @@ def train_routine(plane):
 
         if epoch_val_mae < best_mae:
             best_mae = epoch_val_mae
+            epochs_without_improvement = 0
             # GUARDADO: Si tiene sufijo, lo agrega al nombre del archivo
             filename = f"best_model_{plane_id}.pt"
             save_path = os.path.join(experiment_dir, filename)
             torch.save(model.state_dict(), save_path)
             print(f"   RECORD: {best_mae:.4f} -> Saved to {save_path}")
+        else:
+            epochs_without_improvement += 1
+            print(f"   Sin mejora. Early stopping: {epochs_without_improvement}/{args.patience}")
+            if epochs_without_improvement >= args.patience:
+                print(f"--- EARLY STOPPING ALCANZADO EN LA ÉPOCA {epoch+1} ---")
+                break
 
+    # Registrar HParams con la métrica objetivo final
+    writer.add_hparams(
+        hparam_dict=config_log,
+        metric_dict={'hparam/best_val_mae': best_mae}
+    )
     print(f"FIN {run_name} - Mejor MAE: {best_mae:.4f}")
     writer.close()
 
