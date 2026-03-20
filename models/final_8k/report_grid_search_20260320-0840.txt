@@ -1,0 +1,80 @@
+--- REPORTE GRID SEARCH ENSEMBLES ---
+Script: hybrid_stacking_especifico_final_v3.py
+Timestamp: 20260320-0840
+
+=== REPORTE DE PARÁMETROS ===
+--- Modelos de Interés ---
+axial_res18_211403: NO ENCONTRADO/CARGADO
+cor_vgg16_1225: NO ENCONTRADO/CARGADO
+sag_vgg16_211402: NO ENCONTRADO/CARGADO
+
+--- Resto de Modelos ---
+cor_mse: 44,153,986 parámetros
+sag_mse: 40,475,778 parámetros
+axi_mse: 40,475,778 parámetros
+cor_soft: 37,155,400 parámetros
+sag_soft: 33,477,192 parámetros
+axi_soft: 33,477,192 parámetros
+
+==============================
+
+=== GANADOR ABSOLUTO (RIDGE) ===
+Tipo: N=4
+MAE Ridge:  2.511947
+MAE Simple: 2.539733
+Equipo: ('cor_mse', 'sag_mse', 'axi_mse', 'cor_soft')
+
+NOTA: El mejor N=3 ya es un Tri-Plane (Ax+Cor+Sag).
+
+=== MEJOR COMBINACIÓN N=2 ===
+Modelos: ('cor_mse', 'sag_mse')
+MAE Ridge CV:    2.619955
+MAE Prom Simple: 2.721408
+Path Joblib: /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/train/../models/final_8k/best_ensemble_N=2_2.6200_20260320-0840.joblib
+
+=== MEJOR COMBINACIÓN N=3 ===
+Modelos: ('cor_mse', 'sag_mse', 'axi_mse')
+MAE Ridge CV:    2.538125
+MAE Prom Simple: 2.580559
+Path Joblib: /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/train/../models/final_8k/best_ensemble_N=3_2.5381_20260320-0840.joblib
+
+=== MEJOR COMBINACIÓN N=4 ===
+Modelos: ('cor_mse', 'sag_mse', 'axi_mse', 'cor_soft')
+MAE Ridge CV:    2.511947
+MAE Prom Simple: 2.539733
+Path Joblib: /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/train/../models/final_8k/best_ensemble_N=4_2.5119_20260320-0840.joblib
+
+=== TOP 10 (N=2) ===
+1. Ridge: 2.6200 | ('cor_mse', 'sag_mse')
+2. Ridge: 2.6605 | ('cor_mse', 'sag_soft')
+3. Ridge: 2.7996 | ('sag_mse', 'axi_mse')
+4. Ridge: 2.8233 | ('sag_mse', 'cor_soft')
+6. Ridge: 2.8730 | ('sag_mse', 'axi_soft')
+7. Ridge: 2.8924 | ('axi_mse', 'sag_soft')
+8. Ridge: 2.9692 | ('cor_soft', 'sag_soft')
+9. Ridge: 3.0226 | ('sag_soft', 'axi_soft')
+5. Ridge: 3.0933 | ('sag_mse', 'sag_soft')
+
+=== TOP 10 (N=3) ===
+1. Ridge: 2.5381 | ('cor_mse', 'sag_mse', 'axi_mse')
+4. Ridge: 2.5546 | ('cor_mse', 'sag_mse', 'axi_soft')
+5. Ridge: 2.5755 | ('cor_mse', 'axi_mse', 'sag_soft')
+2. Ridge: 2.5761 | ('cor_mse', 'sag_mse', 'cor_soft')
+3. Ridge: 2.5901 | ('cor_mse', 'sag_mse', 'sag_soft')
+7. Ridge: 2.6024 | ('cor_mse', 'sag_soft', 'axi_soft')
+6. Ridge: 2.6208 | ('cor_mse', 'cor_soft', 'sag_soft')
+8. Ridge: 2.6487 | ('sag_mse', 'axi_mse', 'cor_soft')
+12. Ridge: 2.7068 | ('sag_mse', 'cor_soft', 'axi_soft')
+14. Ridge: 2.7403 | ('axi_mse', 'cor_soft', 'sag_soft')
+
+=== TOP 10 (N=4) ===
+1. Ridge: 2.5119 | ('cor_mse', 'sag_mse', 'axi_mse', 'cor_soft')
+3. Ridge: 2.5231 | ('cor_mse', 'sag_mse', 'axi_mse', 'axi_soft')
+2. Ridge: 2.5254 | ('cor_mse', 'sag_mse', 'axi_mse', 'sag_soft')
+5. Ridge: 2.5327 | ('cor_mse', 'sag_mse', 'cor_soft', 'axi_soft')
+6. Ridge: 2.5453 | ('cor_mse', 'sag_mse', 'sag_soft', 'axi_soft')
+7. Ridge: 2.5560 | ('cor_mse', 'axi_mse', 'cor_soft', 'sag_soft')
+4. Ridge: 2.5604 | ('cor_mse', 'sag_mse', 'cor_soft', 'sag_soft')
+8. Ridge: 2.5619 | ('cor_mse', 'axi_mse', 'sag_soft', 'axi_soft')
+9. Ridge: 2.5771 | ('cor_mse', 'cor_soft', 'sag_soft', 'axi_soft')
+11. Ridge: 2.6312 | ('sag_mse', 'axi_mse', 'cor_soft', 'axi_soft')

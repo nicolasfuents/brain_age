@@ -24,22 +24,37 @@ except ImportError:
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(BASE_DIR, "../models/final_8k")
 
-# Diccionario completo con tus 8 modelos
+## Diccionario completo con tus 8 modelos
+#CANDIDATES = {
+#    # AXIAL
+#    "axial_res18_211403":    {"file": "model_axial_resnet18_JOB_MIXED_211403.pt", "backbone": "resnet18", "plane": "axial"},
+#
+#    # CORONAL
+#    "cor_soft_1328":      {"file": "model_coronal_soft_20260106-1328.pt",        "backbone": "resnet18", "plane": "coronal"},
+#    "cor_res18_201389":   {"file": "model_coronal_resnet18_JOB_201389.pt",       "backbone": "resnet18", "plane": "coronal"},
+#    "cor_vgg16_1225":     {"file": "model_coronal_20251230-1225.pt",             "backbone": "vgg16",    "plane": "coronal"},
+#    "cor_res18_211406":   {"file": "model_coronal_resnet18_JOB_MIXED_211406.pt", "backbone": "resnet18", "plane": "coronal"},
+#    "cor_vgg16_201399":   {"file": "model_coronal_vgg16_old_JOB_201399.pt",      "backbone": "vgg16",    "plane": "coronal"},
+#
+#    # SAGITTAL
+#    "sag_res18_1206":     {"file": "model_sagittal_20260105-1206.pt",            "backbone": "resnet18", "plane": "sagittal"},
+#    "sag_vgg16_211402":   {"file": "model_sagittal_vgg16_JOB_MIXED_211402_MSE.pt", "backbone": "vgg16",    "plane": "sagittal"},
+#    #"sag_vgg16_250689":   {"file": "model_sagittal_vgg16_JOB_MIXED_250689_5_MSE.pt", "backbone": "vgg16",    "plane": "sagittal"},
+#}
+
+
+# Diccionario purista con los 6 modelos nuevos
 CANDIDATES = {
-    # AXIAL
-    "axial_res18_211403":    {"file": "model_axial_resnet18_JOB_MIXED_211403.pt", "backbone": "resnet18", "plane": "axial"},
+    # --- PARADIGMA ALL-MSE (VGG16) ---
+    "cor_mse": {"file": "../TRIPLANE_ALL_MSE_NO_OASIS_361984/best_model_coronal_coronal_all_mse.pt", "backbone": "vgg16", "plane": "coronal"},
+    "sag_mse": {"file": "../TRIPLANE_ALL_MSE_NO_OASIS_361984/best_model_sagittal_sagittal_all_mse.pt", "backbone": "vgg16", "plane": "sagittal"},
+    "axi_mse": {"file": "../TRIPLANE_ALL_MSE_NO_OASIS_361984/best_model_axial_axial_all_mse.pt", "backbone": "vgg16", "plane": "axial"},
 
-    # CORONAL
-    "cor_soft_1328":      {"file": "model_coronal_soft_20260106-1328.pt",        "backbone": "resnet18", "plane": "coronal"},
-    "cor_res18_201389":   {"file": "model_coronal_resnet18_JOB_201389.pt",       "backbone": "resnet18", "plane": "coronal"},
-    "cor_vgg16_1225":     {"file": "model_coronal_20251230-1225.pt",             "backbone": "vgg16",    "plane": "coronal"},
-    "cor_res18_211406":   {"file": "model_coronal_resnet18_JOB_MIXED_211406.pt", "backbone": "resnet18", "plane": "coronal"},
-    "cor_vgg16_201399":   {"file": "model_coronal_vgg16_old_JOB_201399.pt",      "backbone": "vgg16",    "plane": "coronal"},
-
-    # SAGITTAL
-    "sag_res18_1206":     {"file": "model_sagittal_20260105-1206.pt",            "backbone": "resnet18", "plane": "sagittal"},
-    "sag_vgg16_211402":   {"file": "model_sagittal_vgg16_JOB_MIXED_211402_MSE.pt", "backbone": "vgg16",    "plane": "sagittal"},
-    #"sag_vgg16_250689":   {"file": "model_sagittal_vgg16_JOB_MIXED_250689_5_MSE.pt", "backbone": "vgg16",    "plane": "sagittal"},
+    # --- PARADIGMA ALL-SOFT (ResNet18) ---
+    # Reemplazá el 'XXXXXX' con el Job ID de tu SLURM de soft labels
+    "cor_soft": {"file": "../TRIPLANE_ALL_SOFT_NO_OASIS_361985/best_model_coronal_coronal_all_soft.pt", "backbone": "resnet18", "plane": "coronal"},
+    "sag_soft": {"file": "../TRIPLANE_ALL_SOFT_NO_OASIS_361985/best_model_sagittal_sagittal_all_soft.pt", "backbone": "resnet18", "plane": "sagittal"},
+    "axi_soft": {"file": "../TRIPLANE_ALL_SOFT_NO_OASIS_361985/best_model_axial_axial_all_soft.pt", "backbone": "resnet18", "plane": "axial"}
 }
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -55,7 +70,12 @@ VAL_FILE = os.path.join(DATA_DIR, "scripts/IDs/final_combined/val_ids.txt")
 class InferenceDataset(Dataset):
     def __init__(self, ids_file, plane):
         self.plane = plane
-        with open(ids_file, "r") as f: self.ids = [line.strip() for line in f if line.strip()]
+        with open(ids_file, "r") as f: 
+            raw_ids = [line.strip() for line in f if line.strip()]
+            
+        # FILTRO CRÍTICO: El Ridge tampoco debe ver a OASIS3 para no sesgar sus coeficientes
+        self.ids = [sid for sid in raw_ids if "OAS" not in sid]
+        print(f"[DATASET] Sujetos válidos para calibrar el Stacker (sin OASIS3): {len(self.ids)}")
     def __len__(self): return len(self.ids)
     def _find_file(self, sid):
         p1 = os.path.join(DATA_OPENBHB, self.plane, f"{sid}.pt")
