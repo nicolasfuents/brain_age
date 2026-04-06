@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 import json
+import pandas as pd
 import torch
 import numpy as np
 import torch.nn as nn
@@ -65,12 +66,35 @@ torch.backends.cudnn.benchmark = True
 BASE_PROJECT = "/home/nfuentes/scratch/brain_age_project/openBHB_dataset"
 DATA_DIR_OPENBHB = os.path.join(BASE_PROJECT, "data/DB_Lautaro_quasiraw/processed_p99")
 DATA_DIR_OASIS = os.path.join(BASE_PROJECT, "data/processed_training_olders_T1_p99")
+DATA_DIR_FOMO = os.path.join(BASE_PROJECT, "data/DB_Lautaro_quasiraw/processed_fomo_p99")
+CSV_FOMO = os.path.join(BASE_PROJECT, "data/DB_Lautaro_quasiraw/participants.csv")
 TRAIN_TXT = os.path.join(os.path.dirname(__file__), "../IDs/final_combined/train_ids.txt")
 VAL_TXT = os.path.join(os.path.dirname(__file__), "../IDs/final_combined/val_ids.txt")
 
 # ==============================================================================
 # 2. UTILIDADES
 # ==============================================================================
+def get_dataset_name(subject_id):
+    """Clasifica IDs en bases de datos según patrones de texto."""
+    sid = str(subject_id).strip()
+    
+    if 'CERMEP' in sid: return 'CERMEP'
+    if 'AOMIC' in sid: return 'OpenNeuro_AOMIC'
+    if '_S_' in sid and sid[0].isdigit(): return 'ADNI3'
+    if sid.startswith('CP'): return 'LongCOVID'
+    if 'JUK' in sid: return 'JUK'
+    if sid.startswith('PT'): return 'FOMO'
+    
+    if sid.startswith('sub-'):
+        if 'sub-CC' in sid: return 'Cam-CAN'
+        if 'ses-wave' in sid: return 'OpenNeuro_2'
+        return 'OpenBHB' # Por descarte
+
+    # Extraccion dinamica del prefijo para agrupar sujetos desconocidos
+    # Cortamos en el primer guion bajo o medio para aislar la raiz del ID
+    patron_raiz = sid.split('_')[0].split('-')[0]
+    return f'Otros (Patron: {patron_raiz})'
+
 def generate_gaussian_label(age, sigma):
     age = min(max(age, 0), NUM_CLASSES - 1)
     x = torch.arange(NUM_CLASSES).float()
@@ -101,19 +125,81 @@ class BrainAgeDataset(Dataset):
         self.mode = mode
         if not os.path.exists(ids_file):
             sys.exit(f"No existe IDs file: {ids_file}")
+
+        # --- LISTA NEGRA DE SUJETOS A EXCLUIR ---
+        blacklisted_ids = {
+            "PT030_OpenNeuro_ds001942_sub-04", "PT030_OpenNeuro_ds004958_sub-33", "PT030_OpenNeuro_ds004958_sub-05", 
+            "PT030_OpenNeuro_ds004958_sub-04", "PT030_OpenNeuro_ds004958_sub-22", "PT030_OpenNeuro_ds004958_sub-18", 
+            "PT030_OpenNeuro_ds004958_sub-31", "PT030_OpenNeuro_ds004958_sub-34", "PT030_OpenNeuro_ds006040_sub-11", 
+            "PT030_OpenNeuro_ds004958_sub-07", "PT030_OpenNeuro_ds004958_sub-30", "PT030_OpenNeuro_ds004958_sub-32", 
+            "PT030_OpenNeuro_ds003192_sub-05", "PT030_OpenNeuro_ds003192_sub-03", "PT030_OpenNeuro_ds003192_sub-06", 
+            "PT030_OpenNeuro_ds004928_sub-02", "PT030_OpenNeuro_ds004958_sub-15", "099_S_4086_I943534", 
+            "sub-426134424341", "126_S_6559_I1509217", "PT030_OpenNeuro_ds005264_sub-07", "PT030_OpenNeuro_ds005264_sub-21", 
+            "PT030_OpenNeuro_ds003684_sub-14", "PT030_OpenNeuro_ds004815_sub-03", "PT030_OpenNeuro_ds005551_sub-11", 
+            "PT030_OpenNeuro_ds005216_sub-67", "PT030_OpenNeuro_ds005366_sub-099", "PT030_OpenNeuro_ds005264_sub-11", 
+            "sub-121916223122", "009_S_0751_I1485270", "PT030_OpenNeuro_ds003592_sub-265", "126_S_6559_I1356105", 
+            "PT030_OpenNeuro_ds004440_sub-45", "PT030_OpenNeuro_ds005216_sub-61"
+        }
             
         with open(ids_file, "r") as f:
             raw_ids = [line.strip() for line in f.readlines() if line.strip()]
             
-        # Filtramos cualquier ID de OASIS3 sistemáticamente (Zero-Shot para test externo)
-        self.ids = [subj_id for subj_id in raw_ids if "OAS" not in subj_id]
-        print(f"[{self.mode.upper()}] OASIS3 excluido. Sujetos cargados: {len(self.ids)}")
+        # 1. Base OpenBHB (txt originales): Filtramos OASIS3, RRIB y la Lista Negra
+        base_ids = [subj_id for subj_id in raw_ids if "OAS" not in subj_id and "RRIB" not in subj_id and subj_id not in blacklisted_ids]
+        
+        # 2. Extracción de FOMO desde el CSV general (Master Log)
+        df_all = pd.read_csv(CSV_FOMO)
+        
+        # Aislamos FOMO y blindamos contra OASIS, RRIB y la Lista Negra
+        fomo_mask = (df_all['ID'].astype(str).str.startswith('PT')) & \
+                    (~df_all['ID'].astype(str).str.contains('OAS')) & \
+                    (~df_all['ID'].astype(str).str.contains('RRIB')) & \
+                    (~df_all['ID'].astype(str).isin(blacklisted_ids))
+        fomo_ids = df_all[fomo_mask]['ID'].tolist()
+        
+        # Eliminamos posibles duplicados y ordenamos lexicográficamente para reproducibilidad estricta
+        fomo_ids = sorted(list(set(fomo_ids)))
+        
+        # Split 80/20 anclado a la semilla global
+        rng = np.random.RandomState(SEED)
+        rng.shuffle(fomo_ids)
+        
+        split_idx = int(len(fomo_ids) * 0.8)
+        fomo_split = fomo_ids[:split_idx] if self.mode == 'train' else fomo_ids[split_idx:]
+            
+        # Fusión de los subsets
+        self.ids = base_ids + fomo_split
+        
+        # Conteo de distribución por base de datos
+        db_counts = {}
+        for sid in self.ids:
+            db = get_dataset_name(sid)
+            db_counts[db] = db_counts.get(db, 0) + 1
+            
+        # Ordenamos el diccionario por cantidad de mayor a menor para reporte limpio
+        db_counts_sorted = dict(sorted(db_counts.items(), key=lambda item: item[1], reverse=True))
+        
+        print(f"\n" + "="*50)
+        print(f"DISTRIBUCIÓN DE DATOS [{self.mode.upper()}]")
+        print(f"Total de sujetos: {len(self.ids)}")
+        print("-" * 50)
+        for db, count in db_counts_sorted.items():
+            print(f"  > {db}: {count}")
+        print("="*50 + "\n")
 
     def __len__(self): return len(self.ids)
 
     def _get_path(self, subj_id):
-        p = os.path.join(DATA_DIR_OPENBHB, self.plane, f"{subj_id}.pt")
-        return p if os.path.exists(p) else os.path.join(DATA_DIR_OASIS, subj_id, "t1_tensors", f"{self.plane}.pt")
+        # 1. Evaluación FOMO (Estructura jerárquica)
+        p_fomo = os.path.join(DATA_DIR_FOMO, subj_id, "t1_tensors", self.plane, f"{subj_id}.pt")
+        if os.path.exists(p_fomo): return p_fomo
+        
+        # 2. Evaluación OpenBHB (Estructura plana)
+        p_bhb = os.path.join(DATA_DIR_OPENBHB, self.plane, f"{subj_id}.pt")
+        if os.path.exists(p_bhb): return p_bhb
+        
+        # 3. Fallback OASIS (Por robustez de la función, aunque estén excluidos)
+        return os.path.join(DATA_DIR_OASIS, subj_id, "t1_tensors", f"{self.plane}.pt")
 
     def __getitem__(self, idx):
         try:
@@ -213,6 +299,7 @@ def train_routine(plane):
         criterion = nn.L1Loss()
 
     best_mae = float('inf')
+    best_model_path = ""
     epochs_without_improvement = 0
 
     for epoch in range(NUM_EPOCHS):
@@ -336,6 +423,7 @@ def train_routine(plane):
             filename = f"best_model_{plane_id}.pt"
             save_path = os.path.join(experiment_dir, filename)
             torch.save(model.state_dict(), save_path)
+            best_model_path = save_path
             print(f"   RECORD: {best_mae:.4f} -> Saved to {save_path}")
         else:
             epochs_without_improvement += 1
@@ -349,7 +437,18 @@ def train_routine(plane):
         hparam_dict=config_log,
         metric_dict={'hparam/best_val_mae': best_mae}
     )
-    print(f"FIN {run_name} - Mejor MAE: {best_mae:.4f}")
+    
+    tb_path = os.path.abspath(os.path.join(experiment_dir, plane_id))
+    
+    print("\n" + "="*85)
+    print("REPORTE FINAL DE ENTRENAMIENTO")
+    print("-" * 85)
+    print(f"Plano:           {plane_id.upper()}")
+    print(f"Mejor MAE (Val): {best_mae:.4f}")
+    print(f"Ruta del Modelo: {best_model_path}")
+    print(f"Directorio TB:   {tb_path}")
+    print("="*85 + "\n")
+    
     writer.close()
 
 if __name__ == "__main__":
