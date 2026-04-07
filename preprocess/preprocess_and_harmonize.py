@@ -108,8 +108,15 @@ El archivo participants.csv (o equivalente) debe contener, como mínimo, estas c
 - Subject_ID
 - Age
 
-Opcionalmente puede contener otras columnas, pero estas dos son obligatorias
-para que el pipeline funcione sin modificaciones.
+Opcionalmente puede incluir:
+- Sex
+
+Importante:
+- `Subject_ID` y `Age` son obligatorias.
+- `Sex` no es obligatoria, pero si se incluye debe llamarse exactamente `Sex`.
+- La posición de las columnas en el CSV no importa.
+- Se recomienda codificar `Sex` de forma consistente como `F` o `M`.
+- Si `Sex` no existe, está vacía o es NaN, el script asigna automáticamente `Unknown`.
 
 Ejemplo:
 
@@ -122,11 +129,13 @@ Importante:
 - Subject_ID debe coincidir exactamente con el nombre de la carpeta del sujeto.
 - Age debe ser numérico y convertible a float.
 
-Si tu base usa otro nombre de columna (por ejemplo ID, subject, participant_id),
-deberás adaptar manualmente esta línea del script:
+Si tu base usa otros nombres de columna (por ejemplo ID, subject, participant_id),
+deberás adaptar manualmente estas líneas del script:
 
     subject_id = str(row["Subject_ID"]).strip()
     
+Con la misma idea, hacer las modificaciones pertinentes para el caso de que Age y Sex estén nombrados de distinta manera (incluyendo minus/mayus).    
+
 ==============================================================================
 BÚSQUEDA DE T1w
 ==============================================================================
@@ -310,7 +319,7 @@ PROJECT_ROOT = Path("/home/nfuentes/scratch/brain_age_project/openBHB_dataset")
 SCRIPTS_DIR = PROJECT_ROOT / "scripts" / "preprocess"
 BASH_SCRIPT_T1 = SCRIPTS_DIR / "brainprep.sh"
 
-IN_DIR = PROJECT_ROOT / "data" / "OASIS3" / "MR_867_HC"
+IN_DIR = PROJECT_ROOT / "data" / "DB_INTECNUS_BAUTISTA"
 OUT_DIR = IN_DIR / "processed"
 CSV_METADATA = IN_DIR / "participants.csv"
 
@@ -520,7 +529,17 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask):
 
     subject_id = str(row["Subject_ID"]).strip()
     age = float(row["Age"])
-    sex = str(row["Sex"]).strip() if "Sex" in row and pd.notna(row["Sex"]) else "Unknown"
+
+    if "Sex" in row and pd.notna(row["Sex"]):
+        sex_raw = str(row["Sex"]).strip().lower()
+        if sex_raw in ["f", "female", "femenino", "mujer"]:
+            sex = "F"
+        elif sex_raw in ["m", "male", "masculino", "varon", "varón", "hombre"]:
+            sex = "M"
+        else:
+            sex = "Unknown"
+    else:
+        sex = "Unknown"
 
     subj_dir = output_root / subject_id
     prep_dir = subj_dir / "preprocess"
@@ -603,7 +622,6 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask):
         meta = {
             "source": raw_path.name,
             "csv_id": subject_id,
-            "sex": sex,
             "p01": float(p01),
             "p99": float(p99),
             "fslcc": float(cc_val),

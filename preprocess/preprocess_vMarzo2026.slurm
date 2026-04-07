@@ -4,12 +4,12 @@
 #SBATCH --gpus-per-node=4
 #SBATCH --ntasks=1            
 #SBATCH --cpus-per-task=96     
-#SBATCH --time=19:58:00
+#SBATCH --time=11:58:00
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=nicolasfuentes11@gmail.com
 #SBATCH -p compute_full_node
-#SBATCH --output=../logs/prep_intecnus-%j.out
-#SBATCH --error=../logs/prep_intecnus-%j.err
+#SBATCH --output=../logs/prep_intecnus_BAUTISTA-%j.out
+#SBATCH --error=../logs/prep_intecnus_BAUTISTA-%j.err
 
 # 1. Limpiar módulos del cluster
 module --force purge
