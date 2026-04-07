@@ -1,6 +1,291 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+preprocess_and_harmonize.py
+
+Pipeline unificado de preprocesamiento y armonización de dominio para T1 estructural.
+Este script implementa, en un único flujo end-to-end, los siguientes pasos:
+
+1. brainprep:
+   - reorientación estándar
+   - registro afín/no-lineal a MNI152 1 mm isotrópico
+   - corrección de bias field (N4)
+
+2. Armonización espacial:
+   - aplicación de la máscara intracraneana fija SOLID_v2 en espacio MNI
+   - eliminación del ruido extra-axial
+   - homogenización topológica entre dominios
+
+3. Armonización de contraste:
+   - cálculo robusto de percentiles P1–P99 dentro de la máscara
+   - clip y reescalado de intensidades a [0, 1]
+
+4. Extracción 2.5D y serialización:
+   - generación de tensores centrales de 5 slices por plano
+   - exportación a .pt
+   - exportación opcional de NIfTI para inspección visual
+
+==============================================================================
+USO
+==============================================================================
+
+Ejemplo básico:
+    "$CONDA_PREFIX/bin/python" -u preprocess_and_harmonize.py
+
+Ejemplo indicando subdirectorio BIDS específico:
+    "$CONDA_PREFIX/bin/python" -u preprocess_and_harmonize.py --filter anat
+
+Ejemplo cambiando carpeta de salida:
+    "$CONDA_PREFIX/bin/python" -u preprocess_and_harmonize.py --out /ruta/a/processed
+
+Ejemplo cambiando paralelismo:
+    "$CONDA_PREFIX/bin/python" -u preprocess_and_harmonize.py --n_jobs 32
+
+==============================================================================
+REQUISITOS DE ENTORNO
+==============================================================================
+
+Este script asume que el entorno ya tiene disponibles:
+
+- Python con:
+    nibabel
+    numpy
+    pandas
+    torch
+    tqdm
+    joblib
+
+- FSL correctamente cargado en el entorno
+- FreeSurfer correctamente configurado
+- brainprep.sh disponible en:
+    /home/nfuentes/scratch/brain_age_project/openBHB_dataset/scripts/preprocess/brainprep.sh
+
+Variables de entorno requeridas:
+- FSLDIR
+- FREESURFER_HOME
+- FS_LICENSE
+- CONDA_PREFIX (recomendado)
+
+Además, deben existir en el sistema:
+- fslreorient2std
+- fslorient
+- fslcc
+
+==============================================================================
+ESTRUCTURA ESPERADA DE UNA NUEVA BASE DE DATOS
+==============================================================================
+
+Para preprocesar otra base de datos, la organización mínima esperada es:
+
+BASE_DATASET/
+├── participants.csv
+├── SUBJ_001/
+│   └── ... archivos NIfTI T1w ...
+├── SUBJ_002/
+│   └── ... archivos NIfTI T1w ...
+└── SUBJ_003/
+    └── ... archivos NIfTI T1w ...
+
+Es decir:
+
+1. Debe existir una carpeta raíz de entrada (IN_DIR).
+2. Dentro de esa carpeta, cada sujeto debe tener su propia subcarpeta.
+3. El nombre de cada subcarpeta debe coincidir con la columna Subject_ID del CSV.
+4. Dentro de cada carpeta de sujeto debe existir al menos un archivo T1w:
+       *T1w*.nii
+    o
+       *T1w*.nii.gz
+
+El script busca recursivamente esos archivos dentro de cada sujeto.
+
+==============================================================================
+ESTRUCTURA DEL CSV DE METADATOS
+==============================================================================
+
+El archivo participants.csv (o equivalente) debe contener, como mínimo, estas columnas:
+
+- Subject_ID
+- Age
+
+Opcionalmente puede contener otras columnas, pero estas dos son obligatorias
+para que el pipeline funcione sin modificaciones.
+
+Ejemplo:
+
+Subject_ID,Age,Sex,Group
+SUBJ_001,72,F,CN
+SUBJ_002,68,M,MCI
+SUBJ_003,80,F,AD
+
+Importante:
+- Subject_ID debe coincidir exactamente con el nombre de la carpeta del sujeto.
+- Age debe ser numérico y convertible a float.
+
+Si tu base usa otro nombre de columna (por ejemplo ID, subject, participant_id),
+deberás adaptar manualmente esta línea del script:
+
+    subject_id = str(row["Subject_ID"]).strip()
+    
+==============================================================================
+BÚSQUEDA DE T1w
+==============================================================================
+
+El script busca archivos T1w así:
+
+- si NO se usa --filter:
+    busca recursivamente dentro de toda la carpeta del sujeto:
+        *T1w*.nii
+        *T1w*.nii.gz
+
+- si se usa --filter <subdir>:
+    restringe la búsqueda a:
+        IN_DIR / Subject_ID / <subdir> / ...
+
+Ejemplo:
+    --filter anat
+obliga a buscar T1w dentro de:
+    SUBJ_001/anat/
+    SUBJ_002/anat/
+    etc.
+
+Esto es útil para datasets en formato BIDS o semiestructurados.
+
+==============================================================================
+CASO LONGITUDINAL
+==============================================================================
+
+Si un sujeto tiene múltiples T1w válidas, el script aplica una heurística simple:
+
+- busca patrones tipo:
+      sess-dXXXX
+- selecciona la sesión con menor número de días
+- la interpreta como baseline
+
+Ejemplo:
+    sess-d0001  -> preferida frente a sess-d0365
+
+Si tus datasets longitudinales usan otra convención, deberás adaptar la función
+de selección del archivo.
+
+==============================================================================
+SALIDA GENERADA
+==============================================================================
+
+Para cada sujeto procesado exitosamente, la salida queda organizada así:
+
+OUT_DIR/
+└── SUBJ_001/
+    ├── t1_tensors/
+    │   ├── SUBJ_001_full_preprocessed.nii.gz
+    │   ├── axial/
+    │   │   ├── SUBJ_001.pt
+    │   │   └── SUBJ_001_tensor.nii.gz
+    │   ├── coronal/
+    │   │   ├── SUBJ_001.pt
+    │   │   └── SUBJ_001_tensor.nii.gz
+    │   └── sagittal/
+    │       ├── SUBJ_001.pt
+    │       └── SUBJ_001_tensor.nii.gz
+    └── ...
+
+Contenido de cada archivo .pt:
+    {
+        "image": Tensor[5, H, W],
+        "age": torch.float32,
+        "meta": {
+            "source": nombre_archivo_original,
+            "csv_id": Subject_ID,
+            "p01": valor_percentil_1,
+            "p99": valor_percentil_99,
+            "fslcc": correlación_con_MNI,
+            "harmonization": descripcion_del_pipeline
+        }
+    }
+
+==============================================================================
+MÁSCARA REQUERIDA
+==============================================================================
+
+La máscara intracraneana fija debe existir en:
+
+    PROJECT_ROOT / "data" / "atlases" / "MNI152_T1_1mm_brain_mask_SOLID_v2.nii.gz"
+
+Esta máscara debe:
+
+- estar en espacio MNI152 1 mm isotrópico
+- tener la misma forma que la salida de brainprep
+- representar la región intracraneana sólida usada para armonización espacial
+
+Si cambiás de template o resolución, deberás usar una máscara consistente con ese
+nuevo espacio.
+
+==============================================================================
+SUPUESTOS IMPORTANTES PARA REUTILIZAR EL SCRIPT EN OTRA BASE
+==============================================================================
+
+Para reutilizar este pipeline en otra cohorte, deben cumplirse estas condiciones:
+
+1. La imagen T1 puede ser llevada correctamente a MNI152 por brainprep.
+2. La salida final de brainprep tiene la misma geometría que la máscara SOLID_v2.
+3. Cada sujeto tiene una T1w identificable por nombre.
+4. El CSV de metadatos permite obtener:
+   - identificador del sujeto
+   - edad cronológica
+5. La resolución objetivo sigue siendo MNI152 1 mm isotrópico.
+6. La estrategia 2.5D sigue siendo central:
+   - 5 slices axiales
+   - 5 slices coronales
+   - 5 slices sagitales
+
+Si cualquiera de estos supuestos cambia, el script debe ajustarse.
+
+==============================================================================
+QUÉ HAY QUE MODIFICAR SI CAMBIÁS DE BASE DE DATOS
+==============================================================================
+
+Al adaptar el script a otra base, revisá al menos estas variables:
+
+- IN_DIR
+- OUT_DIR
+- CSV_METADATA
+- cómo se leen Subject_ID y Age desde el CSV
+- patrón de búsqueda de T1w
+- posible uso de --filter
+- heurística longitudinal si la nomenclatura de sesiones cambia
+
+En la mayoría de los casos, no hace falta tocar el pipeline de armonización en sí;
+solo la parte de entrada/metadatos.
+
+==============================================================================
+CONTROL DE CALIDAD
+==============================================================================
+
+El script calcula un QC automático usando fslcc contra el template MNI:
+
+- si fslcc <= 0.75
+    el sujeto se descarta con estado [SKIP]
+
+Esto ayuda a eliminar registros fallidos o alineaciones patológicas.
+El umbral puede cambiarse si la nueva cohorte lo requiere.
+
+==============================================================================
+RESUMEN CONCEPTUAL
+==============================================================================
+
+Este script está pensado para producir una representación de entrada invariante
+entre dominios, asegurando:
+
+- misma geometría global (MNI152)
+- misma topología intracraneana (SOLID_v2)
+- misma normalización robusta de contraste (P1–P99)
+- misma extracción 2.5D
+- mismo formato de serialización final (.pt)
+
+La intención es minimizar domain shift entre cohortes antes del entrenamiento
+o la inferencia del modelo de brain age.
+"""
+
 import os
 import sys
 import argparse
@@ -235,6 +520,7 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask):
 
     subject_id = str(row["Subject_ID"]).strip()
     age = float(row["Age"])
+    sex = str(row["Sex"]).strip() if "Sex" in row and pd.notna(row["Sex"]) else "Unknown"
 
     subj_dir = output_root / subject_id
     prep_dir = subj_dir / "preprocess"
@@ -317,6 +603,7 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask):
         meta = {
             "source": raw_path.name,
             "csv_id": subject_id,
+            "sex": sex,
             "p01": float(p01),
             "p99": float(p99),
             "fslcc": float(cc_val),
@@ -325,15 +612,15 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask):
         age_t = torch.tensor(age, dtype=torch.float32)
 
         torch.save(
-            {"image": torch.from_numpy(ten_ax), "age": age_t, "meta": meta},
+            {"image": torch.from_numpy(ten_ax), "age": age_t, "sex": sex, "meta": meta},
             t1_tensor_dir / "axial" / f"{subject_id}.pt"
         )
         torch.save(
-            {"image": torch.from_numpy(ten_cor), "age": age_t, "meta": meta},
+            {"image": torch.from_numpy(ten_cor), "age": age_t, "sex": sex, "meta": meta},
             t1_tensor_dir / "coronal" / f"{subject_id}.pt"
         )
         torch.save(
-            {"image": torch.from_numpy(ten_sag), "age": age_t, "meta": meta},
+            {"image": torch.from_numpy(ten_sag), "age": age_t, "sex": sex, "meta": meta},
             t1_tensor_dir / "sagittal" / f"{subject_id}.pt"
         )
 
