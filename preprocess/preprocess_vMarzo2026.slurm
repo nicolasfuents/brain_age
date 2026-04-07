@@ -4,10 +4,10 @@
 #SBATCH --gpus-per-node=4
 #SBATCH --ntasks=1            
 #SBATCH --cpus-per-task=96     
-#SBATCH --time=2:58:00
+#SBATCH --time=19:58:00
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=nicolasfuentes11@gmail.com
-#SBATCH -p compute
+#SBATCH -p compute_full_node
 #SBATCH --output=../logs/prep_intecnus-%j.out
 #SBATCH --error=../logs/prep_intecnus-%j.err
 
@@ -57,4 +57,6 @@ cd ~/scratch/brain_age_project/openBHB_dataset/scripts/preprocess
 # Ejecutamos el script unificado
 #"$CONDA_PREFIX/bin/python" -u preprocess_vMarzo2026.py
 #"$CONDA_PREFIX/bin/python" -u preprocess.py
-"$CONDA_PREFIX/bin/python" -u preprocess_INTECNUS.py
+#"$CONDA_PREFIX/bin/python" -u preprocess_INTECNUS.py
+#"$CONDA_PREFIX/bin/python" -u preprocess_fomo300k.py
+"$CONDA_PREFIX/bin/python" -u preprocess_and_harmonize.py
