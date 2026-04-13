@@ -42,6 +42,9 @@ Ejemplo cambiando carpeta de salida:
 Ejemplo cambiando paralelismo:
     "$CONDA_PREFIX/bin/python" -u preprocess_and_harmonize.py --n_jobs 32
 
+Ejemplo para bases de datos con nombres de archivo no estandarizados:
+    "$CONDA_PREFIX/bin/python" -u preprocess_and_harmonize.py --wildcard
+    
 ==============================================================================
 REQUISITOS DE ENTORNO
 ==============================================================================
@@ -142,23 +145,34 @@ BÚSQUEDA DE T1w
 
 El script busca archivos T1w así:
 
-- si NO se usa --filter:
-    busca recursivamente dentro de toda la carpeta del sujeto:
-        *T1w*.nii
-        *T1w*.nii.gz
+1. Intento Estándar:
+   Busca recursivamente patrones de nombre estándar (*T1w*.nii, *T1w*.nii.gz).
+    - si NO se usa --filter:
+        busca recursivamente dentro de toda la carpeta del sujeto:
+            *T1w*.nii
+            *T1w*.nii.gz
 
-- si se usa --filter <subdir>:
-    restringe la búsqueda a:
-        IN_DIR / Subject_ID / <subdir> / ...
+    - si se usa --filter <subdir>:
+        restringe la búsqueda a:
+            IN_DIR / Subject_ID / <subdir> / ...
 
-Ejemplo:
-    --filter anat
-obliga a buscar T1w dentro de:
-    SUBJ_001/anat/
-    SUBJ_002/anat/
-    etc.
+        Ejemplo:
+            --filter anat
+        obliga a buscar T1w dentro de:
+            SUBJ_001/anat/
+            SUBJ_002/anat/
+            etc.
 
-Esto es útil para datasets en formato BIDS o semiestructurados.
+        Esto es útil para datasets en formato BIDS o semiestructurados.
+
+2. Modo Robusto (Flag --wildcard):
+   Si no encuentra ningún archivo con el patrón "T1w", y el flag está activo,
+   el script tomará el primer archivo .nii o .nii.gz que encuentre.
+   Esto es vital para bases de datos no-BIDS con nomenclaturas ad-hoc 
+   (ej: "SagIR-FSPGR450.nii.gz").
+
+Importante: El script siempre prioriza el patrón "T1w" para evitar procesar 
+volúmenes T2 o FLAIR que pudieran coexistir en la misma carpeta.
 
 ==============================================================================
 CASO LONGITUDINAL
@@ -319,7 +333,7 @@ PROJECT_ROOT = Path("/home/nfuentes/scratch/brain_age_project/openBHB_dataset")
 SCRIPTS_DIR = PROJECT_ROOT / "scripts" / "preprocess"
 BASH_SCRIPT_T1 = SCRIPTS_DIR / "brainprep.sh"
 
-IN_DIR = PROJECT_ROOT / "data" / "DB_INTECNUS_BAUTISTA"
+IN_DIR = PROJECT_ROOT / "data" / "DB_INTECNUS_BRAVO"
 OUT_DIR = IN_DIR / "processed"
 CSV_METADATA = IN_DIR / "participants.csv"
 
@@ -432,17 +446,23 @@ def robust_normalize_p01_p99(data, mask):
     return out, float(p01), float(p99)
 
 
-def select_t1_file(raw_path_dir, dir_filter=None):
-    if dir_filter:
-        target_dir = raw_path_dir / dir_filter
-        if not target_dir.exists():
-            return None, f"Directorio filtro '{dir_filter}' no existe"
-        nifti_files = list(target_dir.rglob("*T1w*.nii")) + list(target_dir.rglob("*T1w*.nii.gz"))
-    else:
-        nifti_files = list(raw_path_dir.rglob("*T1w*.nii")) + list(raw_path_dir.rglob("*T1w*.nii.gz"))
+def select_t1_file(raw_path_dir, dir_filter=None, wildcard=False):
+    target_dir = raw_path_dir / dir_filter if dir_filter else raw_path_dir
+    
+    if dir_filter and not target_dir.exists():
+        return None, f"Directorio filtro '{dir_filter}' no existe"
+
+    # 1. Intento estándar: buscar explícitamente T1w
+    nifti_files = list(target_dir.rglob("*T1w*.nii")) + list(target_dir.rglob("*T1w*.nii.gz"))
+
+    # 2. Intento robusto: si no hay T1w y wildcard está activo, buscamos cualquier NIfTI
+    if len(nifti_files) == 0 and wildcard:
+        nifti_files = list(target_dir.rglob("*.nii")) + list(target_dir.rglob("*.nii.gz"))
+        if len(nifti_files) > 0:
+            print(f"[*] Wildcard activado para {raw_path_dir.name}: Usando {nifti_files[0].name}")
 
     if len(nifti_files) == 0:
-        return None, "Imagen T1w no encontrada"
+        return None, "Imagen T1w (o NIfTI genérico) no encontrada"
 
     if len(nifti_files) > 1:
         def extract_days(filename):
@@ -524,7 +544,7 @@ def compute_fslcc(t1_mni):
 # ==============================================================================
 # WORKER PRINCIPAL UNIFICADO
 # ==============================================================================
-def process_subject(row, idx, output_root, dir_filter, solid_mask):
+def process_subject(row, idx, output_root, dir_filter, solid_mask, wildcard):
     gpu_id = idx % N_GPUS
 
     subject_id = str(row["Subject_ID"]).strip()
@@ -555,8 +575,20 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask):
     for p in ["axial", "coronal", "sagittal"]:
         (t1_tensor_dir / p).mkdir(exist_ok=True)
 
+    # Definición de ruta con fallback recursivo para estructuras tipo SC/CC
     raw_path_dir = IN_DIR / subject_id
-    raw_path, warning_msg = select_t1_file(raw_path_dir, dir_filter)
+
+    if not raw_path_dir.exists():
+        # Búsqueda recursiva agnóstica a la profundidad
+        matches = list(IN_DIR.glob(f"**/{subject_id}"))
+        # Extraemos el primer match que sea efectivamente un directorio
+        raw_path_dir = next((m for m in matches if m.is_dir()), None)
+        
+        if raw_path_dir is None:
+            return f"[ERROR] {subject_id}: No se encontró la carpeta en {IN_DIR}"
+
+    # Selección de archivo respetando tu firma con dir_filter y wildcard
+    raw_path, warning_msg = select_t1_file(raw_path_dir, dir_filter, wildcard)
 
     if raw_path is None:
         return f"[ERROR] {subject_id}: {warning_msg}"
@@ -660,6 +692,8 @@ def main():
     parser.add_argument("--out", default=str(OUT_DIR))
     parser.add_argument("--filter", type=str, default=None,
                         help="Subdirectorio BIDS específico a buscar (ej. anat2)")
+    parser.add_argument("--wildcard", action="store_true",
+                        help="Si no encuentra *T1w*, toma el primer .nii/.nii.gz que encuentre.")
     parser.add_argument("--n_jobs", type=int, default=N_JOBS)
     args = parser.parse_args()
 
@@ -678,7 +712,7 @@ def main():
     print(f"Procesando {len(df)} sujetos. Lanzando {args.n_jobs} workers en paralelo sobre {N_GPUS} GPUs...")
 
     results = Parallel(n_jobs=args.n_jobs, backend="loky")(
-        delayed(process_subject)(row, idx, output_root, args.filter, solid_mask)
+        delayed(process_subject)(row, idx, output_root, args.filter, solid_mask, args.wildcard)
         for idx, row in tqdm(df.iterrows(), total=len(df))
     )
 
