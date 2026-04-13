@@ -628,9 +628,43 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask, wildcard):
         data_norm, p01, p99 = robust_normalize_p01_p99(data_masked, solid_mask)
 
         # 7. Extracción 2.5D
-        ten_sag = stack_central_slices(data_norm, 0)
-        ten_cor = stack_central_slices(data_norm, 1)
-        ten_ax  = stack_central_slices(data_norm, 2)
+        raw_sag = stack_central_slices(data_norm, 0)
+        raw_cor = stack_central_slices(data_norm, 1)
+        raw_ax  = stack_central_slices(data_norm, 2)
+
+        # 7.b Estandarización Topológica Dinámica (Padding/Crop)
+        # Extraemos los Targets esperados directamente de las dimensiones de la máscara SOLID_v2 (MNI152)
+        # solid_mask shape es típicamente (X, Y, Z) ej: (182, 218, 182)
+        dim_x, dim_y, dim_z = solid_mask.shape
+        targets = {
+            "sagittal": (dim_y, dim_z), # Plano YZ
+            "coronal":  (dim_x, dim_z), # Plano XZ
+            "axial":    (dim_x, dim_y)  # Plano XY
+        }
+
+        def apply_topo_std(tensor_2p5d, target_h, target_w):
+            d, h, w = tensor_2p5d.shape
+            pad_h = max(0, target_h - h)
+            pad_w = max(0, target_w - w)
+            
+            # 1. Zero-Padding simétrico (usando numpy.pad)
+            if pad_h > 0 or pad_w > 0:
+                pad_top = pad_h // 2
+                pad_bottom = pad_h - pad_top
+                pad_left = pad_w // 2
+                pad_right = pad_w - pad_left
+                # Pad solo en H y W, no en la dimensión Depth (los 5 cortes)
+                tensor_2p5d = np.pad(tensor_2p5d, ((0,0), (pad_top, pad_bottom), (pad_left, pad_right)), mode='constant', constant_values=0)
+            
+            # 2. Center-Crop
+            d, h, w = tensor_2p5d.shape
+            crop_top = (h - target_h) // 2
+            crop_left = (w - target_w) // 2
+            return tensor_2p5d[:, crop_top:crop_top+target_h, crop_left:crop_left+target_w]
+
+        ten_sag = apply_topo_std(raw_sag, *targets["sagittal"])
+        ten_cor = apply_topo_std(raw_cor, *targets["coronal"])
+        ten_ax  = apply_topo_std(raw_ax, *targets["axial"])
 
         # 8. Export NIfTI para inspección
         nib.save(
@@ -657,7 +691,7 @@ def process_subject(row, idx, output_root, dir_filter, solid_mask, wildcard):
             "p01": float(p01),
             "p99": float(p99),
             "fslcc": float(cc_val),
-            "harmonization": "brainprep_MNI152_N4 + SOLID_v2_mask + robust_P01_P99",
+            "harmonization": "brainprep_MNI152_N4 + SOLID_v2_mask + robust_P01_P99 + TopoStd",
         }
         age_t = torch.tensor(age, dtype=torch.float32)
 
