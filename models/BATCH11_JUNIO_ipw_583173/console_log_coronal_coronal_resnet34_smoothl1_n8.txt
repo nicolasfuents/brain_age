@@ -1,0 +1,372 @@
+--- Entrenando: coronal_coronal_resnet34_smoothl1_n8 ---
+--- HIPERPARÁMETROS (CONFIG) ---
+{
+    "BATCH_SIZE": 32,
+    "NUM_EPOCHS": 200,
+    "LEARNING_RATE": 0.0001,
+    "PATIENCE": 40,
+    "SEED": 42,
+    "PATCH_SIZE": 64,
+    "STEP": 32,
+    "NBLOCK": 8,
+    "BACKBONE": "resnet34",
+    "INPLACE": 5,
+    "WEIGHT_DECAY": 0.0001,
+    "AUG_ROTATION_DEG": 10.0,
+    "AUG_NOISE_SIGMA": 0.01,
+    "LOSS_TYPE": "SMOOTH_L1",
+    "SCHEDULER_TYPE": "ReduceLROnPlateau",
+    "SUFFIX": "coronal_resnet34_smoothl1_n8",
+    "IPW": true
+}
+--------------------------------------------------------------------------------
+Ruta TensorBoard: BATCH11_JUNIO_ipw_583173/coronal_coronal_resnet34_smoothl1_n8
+--------------------------------------------------------------------------------
+
+==================================================
+DISTRIBUCIÓN DE DATOS [TRAIN]
+Total de sujetos: 5913
+--------------------------------------------------
+  > OpenBHB: 3852
+  > OpenNeuro_2: 754
+  > Cam-CAN: 520
+  > ADNI3: 342
+  > OpenNeuro_AOMIC: 340
+  > JUK: 105
+==================================================
+
+
+==================================================
+DISTRIBUCIÓN DE DATOS [VAL]
+Total de sujetos: 1540
+--------------------------------------------------
+  > OpenBHB: 959
+  > OpenNeuro_2: 202
+  > Cam-CAN: 133
+  > ADNI3: 115
+  > OpenNeuro_AOMIC: 100
+  > JUK: 31
+==================================================
+
+[IPW] Calculando distribución de edades en train (Estabilizado)...
+[IPW] OK. Sujetos válidos: 5913 | Rango Pesos: [0.538, 1.164]
+Ep 001 | Train MAE: 10.64 | Val MAE: 9.8770 | Loss Tr/Val: 100.38/9.72
+🟢 RECORD: 9.8770 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 002 | Train MAE: 6.29 | Val MAE: 5.7571 | Loss Tr/Val: 58.23/5.69
+🟢 RECORD: 5.7571 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 003 | Train MAE: 5.80 | Val MAE: 5.6274 | Loss Tr/Val: 47.13/5.31
+🟢 RECORD: 5.6274 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 004 | Train MAE: 5.54 | Val MAE: 4.3898 | Loss Tr/Val: 41.49/4.04
+🟢 RECORD: 4.3898 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 005 | Train MAE: 5.20 | Val MAE: 6.1138 | Loss Tr/Val: 38.89/5.74
+   Sin mejora. Early stopping: 1/40
+Ep 006 | Train MAE: 5.16 | Val MAE: 4.6392 | Loss Tr/Val: 38.77/4.28
+   Sin mejora. Early stopping: 2/40
+Ep 007 | Train MAE: 4.90 | Val MAE: 5.6916 | Loss Tr/Val: 36.34/5.32
+   Sin mejora. Early stopping: 3/40
+Ep 008 | Train MAE: 4.65 | Val MAE: 4.1429 | Loss Tr/Val: 34.40/3.77
+🟢 RECORD: 4.1429 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 009 | Train MAE: 4.59 | Val MAE: 4.0053 | Loss Tr/Val: 34.01/3.66
+🟢 RECORD: 4.0053 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 010 | Train MAE: 4.71 | Val MAE: 4.3356 | Loss Tr/Val: 34.92/3.98
+   Sin mejora. Early stopping: 1/40
+Ep 011 | Train MAE: 4.29 | Val MAE: 3.9587 | Loss Tr/Val: 31.89/3.59
+🟢 RECORD: 3.9587 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 012 | Train MAE: 4.08 | Val MAE: 3.9282 | Loss Tr/Val: 30.22/3.62
+🟢 RECORD: 3.9282 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 013 | Train MAE: 3.96 | Val MAE: 5.5477 | Loss Tr/Val: 29.04/5.15
+   Sin mejora. Early stopping: 1/40
+Ep 014 | Train MAE: 3.79 | Val MAE: 3.8717 | Loss Tr/Val: 27.77/3.54
+🟢 RECORD: 3.8717 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 015 | Train MAE: 3.74 | Val MAE: 5.2489 | Loss Tr/Val: 27.63/4.86
+   Sin mejora. Early stopping: 1/40
+Ep 016 | Train MAE: 3.69 | Val MAE: 4.1639 | Loss Tr/Val: 27.17/3.78
+   Sin mejora. Early stopping: 2/40
+Ep 017 | Train MAE: 3.55 | Val MAE: 3.7425 | Loss Tr/Val: 26.07/3.37
+🟢 RECORD: 3.7425 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 018 | Train MAE: 3.41 | Val MAE: 4.7635 | Loss Tr/Val: 24.57/4.35
+   Sin mejora. Early stopping: 1/40
+Ep 019 | Train MAE: 3.47 | Val MAE: 6.8201 | Loss Tr/Val: 25.44/6.42
+   Sin mejora. Early stopping: 2/40
+Ep 020 | Train MAE: 3.27 | Val MAE: 3.8145 | Loss Tr/Val: 23.72/3.42
+   Sin mejora. Early stopping: 3/40
+Ep 021 | Train MAE: 3.37 | Val MAE: 3.9592 | Loss Tr/Val: 24.71/3.54
+   Sin mejora. Early stopping: 4/40
+Ep 022 | Train MAE: 3.25 | Val MAE: 3.8844 | Loss Tr/Val: 23.30/3.47
+   Sin mejora. Early stopping: 5/40
+Ep 023 | Train MAE: 3.09 | Val MAE: 3.9763 | Loss Tr/Val: 22.22/3.57
+   Sin mejora. Early stopping: 6/40
+Ep 024 | Train MAE: 3.13 | Val MAE: 5.7529 | Loss Tr/Val: 22.59/5.32
+   Sin mejora. Early stopping: 7/40
+Ep 025 | Train MAE: 3.04 | Val MAE: 3.8414 | Loss Tr/Val: 21.80/3.45
+   Sin mejora. Early stopping: 8/40
+Ep 026 | Train MAE: 2.94 | Val MAE: 3.7267 | Loss Tr/Val: 21.00/3.34
+🟢 RECORD: 3.7267 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 027 | Train MAE: 2.95 | Val MAE: 3.9299 | Loss Tr/Val: 20.94/3.51
+   Sin mejora. Early stopping: 1/40
+Ep 028 | Train MAE: 2.80 | Val MAE: 3.4385 | Loss Tr/Val: 20.00/3.04
+🟢 RECORD: 3.4385 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 029 | Train MAE: 2.87 | Val MAE: 4.3473 | Loss Tr/Val: 20.55/3.92
+   Sin mejora. Early stopping: 1/40
+Ep 030 | Train MAE: 2.81 | Val MAE: 3.3803 | Loss Tr/Val: 19.86/3.00
+🟢 RECORD: 3.3803 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 031 | Train MAE: 2.79 | Val MAE: 4.0554 | Loss Tr/Val: 19.70/3.64
+   Sin mejora. Early stopping: 1/40
+Ep 032 | Train MAE: 2.71 | Val MAE: 3.6135 | Loss Tr/Val: 19.04/3.19
+   Sin mejora. Early stopping: 2/40
+Ep 033 | Train MAE: 2.57 | Val MAE: 3.5629 | Loss Tr/Val: 18.06/3.14
+   Sin mejora. Early stopping: 3/40
+Ep 034 | Train MAE: 2.76 | Val MAE: 3.6261 | Loss Tr/Val: 19.63/3.22
+   Sin mejora. Early stopping: 4/40
+Ep 035 | Train MAE: 2.61 | Val MAE: 5.4143 | Loss Tr/Val: 18.66/4.96
+   Sin mejora. Early stopping: 5/40
+Ep 036 | Train MAE: 2.54 | Val MAE: 4.1101 | Loss Tr/Val: 17.70/3.69
+   Sin mejora. Early stopping: 6/40
+Ep 037 | Train MAE: 2.47 | Val MAE: 5.0371 | Loss Tr/Val: 17.36/4.62
+   Sin mejora. Early stopping: 7/40
+Ep 038 | Train MAE: 2.58 | Val MAE: 3.6691 | Loss Tr/Val: 18.28/3.24
+   Sin mejora. Early stopping: 8/40
+Ep 039 | Train MAE: 2.46 | Val MAE: 3.4814 | Loss Tr/Val: 17.28/3.07
+   Sin mejora. Early stopping: 9/40
+Ep 040 | Train MAE: 2.42 | Val MAE: 3.2704 | Loss Tr/Val: 16.96/2.85
+🟢 RECORD: 3.2704 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 041 | Train MAE: 2.42 | Val MAE: 3.5005 | Loss Tr/Val: 16.91/3.08
+   Sin mejora. Early stopping: 1/40
+Ep 042 | Train MAE: 2.45 | Val MAE: 4.4523 | Loss Tr/Val: 17.07/4.02
+   Sin mejora. Early stopping: 2/40
+Ep 043 | Train MAE: 2.44 | Val MAE: 4.0635 | Loss Tr/Val: 16.97/3.64
+   Sin mejora. Early stopping: 3/40
+Ep 044 | Train MAE: 2.39 | Val MAE: 3.9642 | Loss Tr/Val: 16.69/3.53
+   Sin mejora. Early stopping: 4/40
+Ep 045 | Train MAE: 2.28 | Val MAE: 5.4328 | Loss Tr/Val: 15.61/5.04
+   Sin mejora. Early stopping: 5/40
+Ep 046 | Train MAE: 2.32 | Val MAE: 4.2918 | Loss Tr/Val: 16.18/3.86
+   Sin mejora. Early stopping: 6/40
+Ep 047 | Train MAE: 2.27 | Val MAE: 3.2608 | Loss Tr/Val: 15.68/2.90
+🟢 RECORD: 3.2608 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 048 | Train MAE: 2.31 | Val MAE: 3.3563 | Loss Tr/Val: 15.94/2.92
+   Sin mejora. Early stopping: 1/40
+Ep 049 | Train MAE: 2.23 | Val MAE: 3.2954 | Loss Tr/Val: 15.35/2.87
+   Sin mejora. Early stopping: 2/40
+Ep 050 | Train MAE: 2.16 | Val MAE: 3.1454 | Loss Tr/Val: 14.76/2.72
+🟢 RECORD: 3.1454 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 051 | Train MAE: 2.14 | Val MAE: 3.4412 | Loss Tr/Val: 14.95/3.07
+   Sin mejora. Early stopping: 1/40
+Ep 052 | Train MAE: 2.19 | Val MAE: 4.1468 | Loss Tr/Val: 15.14/3.70
+   Sin mejora. Early stopping: 2/40
+Ep 053 | Train MAE: 2.15 | Val MAE: 3.9891 | Loss Tr/Val: 14.88/3.58
+   Sin mejora. Early stopping: 3/40
+Ep 054 | Train MAE: 2.10 | Val MAE: 3.6893 | Loss Tr/Val: 14.52/3.28
+   Sin mejora. Early stopping: 4/40
+Ep 055 | Train MAE: 2.08 | Val MAE: 3.3322 | Loss Tr/Val: 14.04/2.89
+   Sin mejora. Early stopping: 5/40
+Ep 056 | Train MAE: 2.05 | Val MAE: 3.4437 | Loss Tr/Val: 14.06/3.07
+   Sin mejora. Early stopping: 6/40
+Ep 057 | Train MAE: 2.06 | Val MAE: 3.8174 | Loss Tr/Val: 14.01/3.39
+   Sin mejora. Early stopping: 7/40
+Ep 058 | Train MAE: 2.09 | Val MAE: 3.6246 | Loss Tr/Val: 14.23/3.20
+   Sin mejora. Early stopping: 8/40
+Ep 059 | Train MAE: 2.04 | Val MAE: 3.6248 | Loss Tr/Val: 13.81/3.20
+   Sin mejora. Early stopping: 9/40
+Ep 060 | Train MAE: 1.96 | Val MAE: 3.1147 | Loss Tr/Val: 13.28/2.70
+🟢 RECORD: 3.1147 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 061 | Train MAE: 1.94 | Val MAE: 3.3465 | Loss Tr/Val: 13.16/2.92
+   Sin mejora. Early stopping: 1/40
+Ep 062 | Train MAE: 2.02 | Val MAE: 3.0335 | Loss Tr/Val: 13.64/2.61
+🟢 RECORD: 3.0335 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 063 | Train MAE: 1.96 | Val MAE: 3.0907 | Loss Tr/Val: 13.20/2.66
+   Sin mejora. Early stopping: 1/40
+Ep 064 | Train MAE: 1.97 | Val MAE: 3.2367 | Loss Tr/Val: 13.23/2.83
+   Sin mejora. Early stopping: 2/40
+Ep 065 | Train MAE: 1.93 | Val MAE: 3.1569 | Loss Tr/Val: 13.02/2.75
+   Sin mejora. Early stopping: 3/40
+Ep 066 | Train MAE: 1.94 | Val MAE: 4.0602 | Loss Tr/Val: 13.02/3.62
+   Sin mejora. Early stopping: 4/40
+Ep 067 | Train MAE: 1.90 | Val MAE: 3.8664 | Loss Tr/Val: 12.71/3.43
+   Sin mejora. Early stopping: 5/40
+Ep 068 | Train MAE: 1.91 | Val MAE: 3.7772 | Loss Tr/Val: 12.87/3.38
+   Sin mejora. Early stopping: 6/40
+Ep 069 | Train MAE: 1.89 | Val MAE: 3.8522 | Loss Tr/Val: 12.49/3.43
+   Sin mejora. Early stopping: 7/40
+Ep 070 | Train MAE: 1.87 | Val MAE: 3.3238 | Loss Tr/Val: 12.32/2.91
+   Sin mejora. Early stopping: 8/40
+Ep 071 | Train MAE: 1.81 | Val MAE: 3.0626 | Loss Tr/Val: 11.85/2.64
+   Sin mejora. Early stopping: 9/40
+Ep 072 | Train MAE: 1.85 | Val MAE: 4.0131 | Loss Tr/Val: 12.17/3.56
+   Sin mejora. Early stopping: 10/40
+Ep 073 | Train MAE: 1.81 | Val MAE: 3.1641 | Loss Tr/Val: 11.93/2.77
+   Sin mejora. Early stopping: 11/40
+Ep 074 | Train MAE: 1.66 | Val MAE: 3.3662 | Loss Tr/Val: 10.58/2.94
+   Sin mejora. Early stopping: 12/40
+Ep 075 | Train MAE: 1.54 | Val MAE: 3.5501 | Loss Tr/Val: 9.73/3.13
+   Sin mejora. Early stopping: 13/40
+Ep 076 | Train MAE: 1.42 | Val MAE: 3.0878 | Loss Tr/Val: 8.78/2.65
+   Sin mejora. Early stopping: 14/40
+Ep 077 | Train MAE: 1.44 | Val MAE: 3.1657 | Loss Tr/Val: 8.83/2.75
+   Sin mejora. Early stopping: 15/40
+Ep 078 | Train MAE: 1.44 | Val MAE: 3.2413 | Loss Tr/Val: 8.90/2.79
+   Sin mejora. Early stopping: 16/40
+Ep 079 | Train MAE: 1.41 | Val MAE: 3.2077 | Loss Tr/Val: 8.48/2.77
+   Sin mejora. Early stopping: 17/40
+Ep 080 | Train MAE: 1.36 | Val MAE: 3.0425 | Loss Tr/Val: 8.17/2.62
+   Sin mejora. Early stopping: 18/40
+Ep 081 | Train MAE: 1.35 | Val MAE: 3.0582 | Loss Tr/Val: 8.18/2.61
+   Sin mejora. Early stopping: 19/40
+Ep 082 | Train MAE: 1.36 | Val MAE: 3.1087 | Loss Tr/Val: 8.09/2.67
+   Sin mejora. Early stopping: 20/40
+Ep 083 | Train MAE: 1.34 | Val MAE: 3.2588 | Loss Tr/Val: 8.07/2.83
+   Sin mejora. Early stopping: 21/40
+Ep 084 | Train MAE: 1.38 | Val MAE: 4.5606 | Loss Tr/Val: 8.23/4.12
+   Sin mejora. Early stopping: 22/40
+Ep 085 | Train MAE: 1.19 | Val MAE: 3.4440 | Loss Tr/Val: 6.75/3.01
+   Sin mejora. Early stopping: 23/40
+Ep 086 | Train MAE: 1.14 | Val MAE: 3.0480 | Loss Tr/Val: 6.31/2.63
+   Sin mejora. Early stopping: 24/40
+Ep 087 | Train MAE: 1.19 | Val MAE: 3.1131 | Loss Tr/Val: 6.73/2.66
+   Sin mejora. Early stopping: 25/40
+Ep 088 | Train MAE: 1.15 | Val MAE: 3.2298 | Loss Tr/Val: 6.44/2.79
+   Sin mejora. Early stopping: 26/40
+Ep 089 | Train MAE: 1.15 | Val MAE: 3.0927 | Loss Tr/Val: 6.42/2.65
+   Sin mejora. Early stopping: 27/40
+Ep 090 | Train MAE: 1.11 | Val MAE: 3.9228 | Loss Tr/Val: 6.15/3.49
+   Sin mejora. Early stopping: 28/40
+Ep 091 | Train MAE: 1.09 | Val MAE: 3.0504 | Loss Tr/Val: 6.01/2.61
+   Sin mejora. Early stopping: 29/40
+Ep 092 | Train MAE: 1.05 | Val MAE: 3.8665 | Loss Tr/Val: 5.61/3.43
+   Sin mejora. Early stopping: 30/40
+Ep 093 | Train MAE: 1.07 | Val MAE: 3.6416 | Loss Tr/Val: 5.78/3.22
+   Sin mejora. Early stopping: 31/40
+Ep 094 | Train MAE: 1.06 | Val MAE: 3.6216 | Loss Tr/Val: 5.69/3.18
+   Sin mejora. Early stopping: 32/40
+Ep 095 | Train MAE: 1.02 | Val MAE: 3.0025 | Loss Tr/Val: 5.37/2.56
+🟢 RECORD: 3.0025 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 096 | Train MAE: 1.03 | Val MAE: 3.2554 | Loss Tr/Val: 5.49/2.81
+   Sin mejora. Early stopping: 1/40
+Ep 097 | Train MAE: 1.05 | Val MAE: 3.0556 | Loss Tr/Val: 5.60/2.62
+   Sin mejora. Early stopping: 2/40
+Ep 098 | Train MAE: 1.04 | Val MAE: 3.0510 | Loss Tr/Val: 5.48/2.61
+   Sin mejora. Early stopping: 3/40
+Ep 099 | Train MAE: 1.05 | Val MAE: 3.0212 | Loss Tr/Val: 5.67/2.58
+   Sin mejora. Early stopping: 4/40
+Ep 100 | Train MAE: 1.00 | Val MAE: 3.0622 | Loss Tr/Val: 5.23/2.62
+   Sin mejora. Early stopping: 5/40
+Ep 101 | Train MAE: 1.04 | Val MAE: 3.1636 | Loss Tr/Val: 5.51/2.72
+   Sin mejora. Early stopping: 6/40
+Ep 102 | Train MAE: 1.02 | Val MAE: 3.1625 | Loss Tr/Val: 5.29/2.72
+   Sin mejora. Early stopping: 7/40
+Ep 103 | Train MAE: 0.99 | Val MAE: 3.0574 | Loss Tr/Val: 5.25/2.61
+   Sin mejora. Early stopping: 8/40
+Ep 104 | Train MAE: 0.99 | Val MAE: 3.0678 | Loss Tr/Val: 5.09/2.63
+   Sin mejora. Early stopping: 9/40
+Ep 105 | Train MAE: 0.93 | Val MAE: 3.0681 | Loss Tr/Val: 4.79/2.62
+   Sin mejora. Early stopping: 10/40
+Ep 106 | Train MAE: 0.96 | Val MAE: 3.1443 | Loss Tr/Val: 4.96/2.70
+   Sin mejora. Early stopping: 11/40
+Ep 107 | Train MAE: 0.94 | Val MAE: 3.5756 | Loss Tr/Val: 4.83/3.14
+   Sin mejora. Early stopping: 12/40
+Ep 108 | Train MAE: 0.91 | Val MAE: 3.1974 | Loss Tr/Val: 4.61/2.75
+   Sin mejora. Early stopping: 13/40
+Ep 109 | Train MAE: 0.90 | Val MAE: 3.0975 | Loss Tr/Val: 4.44/2.65
+   Sin mejora. Early stopping: 14/40
+Ep 110 | Train MAE: 0.88 | Val MAE: 3.1343 | Loss Tr/Val: 4.35/2.69
+   Sin mejora. Early stopping: 15/40
+Ep 111 | Train MAE: 0.88 | Val MAE: 3.1343 | Loss Tr/Val: 4.40/2.69
+   Sin mejora. Early stopping: 16/40
+Ep 112 | Train MAE: 0.87 | Val MAE: 3.0053 | Loss Tr/Val: 4.28/2.56
+   Sin mejora. Early stopping: 17/40
+Ep 113 | Train MAE: 0.85 | Val MAE: 3.4903 | Loss Tr/Val: 4.12/3.05
+   Sin mejora. Early stopping: 18/40
+Ep 114 | Train MAE: 0.87 | Val MAE: 2.8856 | Loss Tr/Val: 4.24/2.44
+🟢 RECORD: 2.8856 -> Saved to /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Ep 115 | Train MAE: 0.85 | Val MAE: 2.9997 | Loss Tr/Val: 4.14/2.56
+   Sin mejora. Early stopping: 1/40
+Ep 116 | Train MAE: 0.84 | Val MAE: 3.0230 | Loss Tr/Val: 4.08/2.58
+   Sin mejora. Early stopping: 2/40
+Ep 117 | Train MAE: 0.85 | Val MAE: 3.0270 | Loss Tr/Val: 4.24/2.58
+   Sin mejora. Early stopping: 3/40
+Ep 118 | Train MAE: 0.86 | Val MAE: 2.9812 | Loss Tr/Val: 4.23/2.54
+   Sin mejora. Early stopping: 4/40
+Ep 119 | Train MAE: 0.84 | Val MAE: 3.4171 | Loss Tr/Val: 4.05/2.99
+   Sin mejora. Early stopping: 5/40
+Ep 120 | Train MAE: 0.84 | Val MAE: 2.9228 | Loss Tr/Val: 4.11/2.49
+   Sin mejora. Early stopping: 6/40
+Ep 121 | Train MAE: 0.82 | Val MAE: 3.0554 | Loss Tr/Val: 3.98/2.61
+   Sin mejora. Early stopping: 7/40
+Ep 122 | Train MAE: 0.85 | Val MAE: 2.9983 | Loss Tr/Val: 4.13/2.55
+   Sin mejora. Early stopping: 8/40
+Ep 123 | Train MAE: 0.86 | Val MAE: 2.9589 | Loss Tr/Val: 4.22/2.52
+   Sin mejora. Early stopping: 9/40
+Ep 124 | Train MAE: 0.84 | Val MAE: 2.9247 | Loss Tr/Val: 4.08/2.49
+   Sin mejora. Early stopping: 10/40
+Ep 125 | Train MAE: 0.80 | Val MAE: 2.9308 | Loss Tr/Val: 3.82/2.49
+   Sin mejora. Early stopping: 11/40
+Ep 126 | Train MAE: 0.81 | Val MAE: 3.0309 | Loss Tr/Val: 3.92/2.59
+   Sin mejora. Early stopping: 12/40
+Ep 127 | Train MAE: 0.79 | Val MAE: 3.2293 | Loss Tr/Val: 3.72/2.80
+   Sin mejora. Early stopping: 13/40
+Ep 128 | Train MAE: 0.79 | Val MAE: 2.9275 | Loss Tr/Val: 3.75/2.49
+   Sin mejora. Early stopping: 14/40
+Ep 129 | Train MAE: 0.78 | Val MAE: 3.0046 | Loss Tr/Val: 3.63/2.56
+   Sin mejora. Early stopping: 15/40
+Ep 130 | Train MAE: 0.78 | Val MAE: 3.1453 | Loss Tr/Val: 3.66/2.70
+   Sin mejora. Early stopping: 16/40
+Ep 131 | Train MAE: 0.77 | Val MAE: 2.9263 | Loss Tr/Val: 3.60/2.48
+   Sin mejora. Early stopping: 17/40
+Ep 132 | Train MAE: 0.76 | Val MAE: 2.9611 | Loss Tr/Val: 3.52/2.52
+   Sin mejora. Early stopping: 18/40
+Ep 133 | Train MAE: 0.76 | Val MAE: 2.9418 | Loss Tr/Val: 3.45/2.50
+   Sin mejora. Early stopping: 19/40
+Ep 134 | Train MAE: 0.77 | Val MAE: 3.0760 | Loss Tr/Val: 3.53/2.63
+   Sin mejora. Early stopping: 20/40
+Ep 135 | Train MAE: 0.77 | Val MAE: 2.9723 | Loss Tr/Val: 3.59/2.53
+   Sin mejora. Early stopping: 21/40
+Ep 136 | Train MAE: 0.76 | Val MAE: 2.9312 | Loss Tr/Val: 3.53/2.49
+   Sin mejora. Early stopping: 22/40
+Ep 137 | Train MAE: 0.73 | Val MAE: 2.9108 | Loss Tr/Val: 3.26/2.47
+   Sin mejora. Early stopping: 23/40
+Ep 138 | Train MAE: 0.72 | Val MAE: 2.9430 | Loss Tr/Val: 3.23/2.50
+   Sin mejora. Early stopping: 24/40
+Ep 139 | Train MAE: 0.75 | Val MAE: 3.0818 | Loss Tr/Val: 3.42/2.64
+   Sin mejora. Early stopping: 25/40
+Ep 140 | Train MAE: 0.75 | Val MAE: 2.9655 | Loss Tr/Val: 3.49/2.52
+   Sin mejora. Early stopping: 26/40
+Ep 141 | Train MAE: 0.73 | Val MAE: 3.1026 | Loss Tr/Val: 3.31/2.67
+   Sin mejora. Early stopping: 27/40
+Ep 142 | Train MAE: 0.73 | Val MAE: 3.2966 | Loss Tr/Val: 3.30/2.85
+   Sin mejora. Early stopping: 28/40
+Ep 143 | Train MAE: 0.73 | Val MAE: 3.0585 | Loss Tr/Val: 3.31/2.62
+   Sin mejora. Early stopping: 29/40
+Ep 144 | Train MAE: 0.72 | Val MAE: 3.0199 | Loss Tr/Val: 3.33/2.57
+   Sin mejora. Early stopping: 30/40
+Ep 145 | Train MAE: 0.71 | Val MAE: 3.1754 | Loss Tr/Val: 3.13/2.74
+   Sin mejora. Early stopping: 31/40
+Ep 146 | Train MAE: 0.73 | Val MAE: 3.2661 | Loss Tr/Val: 3.38/2.82
+   Sin mejora. Early stopping: 32/40
+Ep 147 | Train MAE: 0.70 | Val MAE: 2.9645 | Loss Tr/Val: 3.10/2.52
+   Sin mejora. Early stopping: 33/40
+Ep 148 | Train MAE: 0.72 | Val MAE: 3.4341 | Loss Tr/Val: 3.29/3.00
+   Sin mejora. Early stopping: 34/40
+Ep 149 | Train MAE: 0.73 | Val MAE: 2.9705 | Loss Tr/Val: 3.36/2.53
+   Sin mejora. Early stopping: 35/40
+Ep 150 | Train MAE: 0.72 | Val MAE: 3.0120 | Loss Tr/Val: 3.20/2.57
+   Sin mejora. Early stopping: 36/40
+Ep 151 | Train MAE: 0.73 | Val MAE: 3.0481 | Loss Tr/Val: 3.33/2.60
+   Sin mejora. Early stopping: 37/40
+Ep 152 | Train MAE: 0.70 | Val MAE: 2.9585 | Loss Tr/Val: 3.15/2.52
+   Sin mejora. Early stopping: 38/40
+Ep 153 | Train MAE: 0.71 | Val MAE: 3.1916 | Loss Tr/Val: 3.17/2.75
+   Sin mejora. Early stopping: 39/40
+Ep 154 | Train MAE: 0.73 | Val MAE: 3.0310 | Loss Tr/Val: 3.30/2.59
+   Sin mejora. Early stopping: 40/40
+--- EARLY STOPPING ALCANZADO EN LA ÉPOCA 154 ---
+
+=====================================================================================
+REPORTE FINAL DE ENTRENAMIENTO
+-------------------------------------------------------------------------------------
+Plano:           CORONAL_CORONAL_RESNET34_SMOOTHL1_N8
+Mejor MAE (Val): 2.8856
+Ruta del Modelo: /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/best_model_coronal_coronal_resnet34_smoothl1_n8.pt
+Directorio TB:   /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/coronal_coronal_resnet34_smoothl1_n8
+Log de Consola:  /scratch/nfuentes/brain_age_project/openBHB_dataset/scripts/models/BATCH11_JUNIO_ipw_583173/console_log_coronal_coronal_resnet34_smoothl1_n8.txt
+=====================================================================================
+
