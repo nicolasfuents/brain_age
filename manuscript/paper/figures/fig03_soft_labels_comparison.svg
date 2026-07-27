@@ -1,0 +1,221 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1060" width="100%" height="100%" style="background-color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="2" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/>
+    </filter>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#059669"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0284c7"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1800" height="1060" fill="#ffffff" />
+
+  <!-- MAIN TITLE & SUBTITLE -->
+  <text x="900.0" y="42" font-size="26" font-weight="bold" fill="#0f172a" text-anchor="middle">Target Representation &amp; Loss Optimization: One-Hot vs. Soft Gaussian Labels</text>
+  <text x="900.0" y="70" font-size="15" font-weight="500" fill="#475569" text-anchor="middle">Comparison of Ordinal-Aware Gaussian Distribution Modeling vs. Hard Discrete Classification in Brain Age Prediction</text>
+
+  <!-- ========================================================================= -->
+  <!-- PANEL A: TRADITIONAL ONE-HOT ENCODING -->
+  <!-- ========================================================================= -->
+  <g transform="translate(0, 0)">
+    <!-- Container Box -->
+    <rect x="50" y="100" width="820" height="465" rx="12" ry="12" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.8" filter="url(#shadow)"/>
+    
+    <!-- Panel Header -->
+    <rect x="50" y="100" width="820" height="45" rx="12" ry="12" fill="#fee2e2"/>
+    <rect x="50" y="133" width="820" height="12" fill="#fee2e2"/>
+    <text x="70" y="129" font-size="17" font-weight="bold" fill="#991b1b">(A) Traditional Hard One-Hot Encoding (Ordinal-Unaware)</text>
+    <text x="850" y="129" font-size="14" font-weight="bold" fill="#991b1b" text-anchor="end">Target Age: y = 65.0</text>
+
+    <!-- Plot Axes -->
+    <line x1="100" y1="410" x2="100" y2="190" stroke="#475569" stroke-width="1.5"/>
+    <text x="90" y="200" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">1.0</text>
+    <text x="90" y="305" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">0.5</text>
+    <text x="90" y="410" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">0.0</text>
+    <text x="55" y="300" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle" transform="rotate(-90 55 300)">Target Probability y_k</text>
+
+    <!-- X-axis -->
+    <line x1="100" y1="410" x2="820" y2="410" stroke="#475569" stroke-width="1.5"/>
+    <text x="100" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">0</text>
+    <text x="244" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">20</text>
+    <text x="388" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">40</text>
+    <text x="532" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">60</text>
+    <text x="568" y="430" font-size="13" font-weight="bold" fill="#dc2626" text-anchor="middle">65</text>
+    <text x="676" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">80</text>
+    <text x="820" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">99</text>
+    <text x="460" y="450" font-size="14" font-weight="bold" fill="#475569" text-anchor="middle">Discrete Age Bins (k &#8712; [0, 99])</text>
+
+    <!-- Bars -->
+    <rect x="100.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="107.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="114.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="121.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="128.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="136.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="143.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="150.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="157.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="164.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="172.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="179.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="186.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="193.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="200.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="208.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="215.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="222.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="229.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="236.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="244.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="251.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="258.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="265.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="272.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="280.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="287.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="294.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="301.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="308.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="316.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="323.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="330.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="337.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="344.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="352.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="359.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="366.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="373.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="380.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="388.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="395.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="402.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="409.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="416.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="424.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="431.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="438.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="445.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="452.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="460.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="467.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="474.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="481.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="488.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="496.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="503.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="510.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="517.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="524.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="532.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="539.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="546.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="553.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="560.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="568.0" y="200.0" width="7.2" height="210.0" fill="#dc2626" rx="1"/><text x="571.6" y="192.0" font-size="14" font-weight="bold" fill="#dc2626" text-anchor="middle">1.0</text><rect x="575.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="582.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="589.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="596.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="604.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="611.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="618.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="625.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="632.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="640.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="647.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="654.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="661.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="668.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="676.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="683.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="690.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="697.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="704.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="712.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="719.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="726.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="733.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="740.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="748.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="755.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="762.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="769.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="776.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="784.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="791.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="798.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="805.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="812.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/>
+
+    <!-- Key Limitations Cards -->
+    <g transform="translate(70, 472)">
+      <!-- Card 1: Ordinal Blindness -->
+      <rect x="0" y="0" width="245" height="75" rx="8" ry="8" fill="#ffffff" stroke="#fca5a5" stroke-width="1.2"/>
+      <text x="12" y="22" font-size="13" font-weight="bold" fill="#991b1b">&#9888; Ordinal Blindness</text>
+      <text x="12" y="42" font-size="11.5" fill="#475569">Bin 64 (error = 1 yr) &amp; Bin 10</text>
+      <text x="12" y="58" font-size="11.5" fill="#475569">(error = 55 yrs) receive probability 0.</text>
+
+      <!-- Card 2: Quantization Error -->
+      <rect x="260" y="0" width="245" height="75" rx="8" ry="8" fill="#ffffff" stroke="#fca5a5" stroke-width="1.2"/>
+      <text x="272" y="22" font-size="13" font-weight="bold" fill="#991b1b">&#9888; Quantization Error</text>
+      <text x="272" y="42" font-size="11.5" fill="#475569">Forces continuous age into integer</text>
+      <text x="272" y="58" font-size="11.5" fill="#475569">bins. Error bound: &#177;0.5 years.</text>
+
+      <!-- Card 3: Hard Decision -->
+      <rect x="520" y="0" width="260" height="75" rx="8" ry="8" fill="#ffffff" stroke="#fca5a5" stroke-width="1.2"/>
+      <text x="532" y="22" font-size="13" font-weight="bold" fill="#991b1b">&#9888; Argmax Hard Decision</text>
+      <text x="532" y="42" font-size="11.5" fill="#475569">y_pred = argmax(p). Non-differentiable</text>
+      <text x="532" y="58" font-size="11.5" fill="#475569">step function, no decimal resolution.</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- PANEL B: PROPOSED SOFT GAUSSIAN LABELS -->
+  <!-- ========================================================================= -->
+  <g transform="translate(0, 0)">
+    <!-- Container Box -->
+    <rect x="930" y="100" width="820" height="465" rx="12" ry="12" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.8" filter="url(#shadow)"/>
+    
+    <!-- Panel Header -->
+    <rect x="930" y="100" width="820" height="45" rx="12" ry="12" fill="#d1fae5"/>
+    <rect x="930" y="133" width="820" height="12" fill="#d1fae5"/>
+    <text x="950" y="129" font-size="17" font-weight="bold" fill="#065f46">(B) Proposed Soft Gaussian Label Distribution (Ours)</text>
+    <text x="1730" y="129" font-size="14" font-weight="bold" fill="#065f46" text-anchor="end">Target: y = 65.0 | &#963; = 1.8</text>
+
+    <!-- Plot Axes -->
+    <line x1="980" y1="410" x2="980" y2="190" stroke="#475569" stroke-width="1.5"/>
+    <text x="970" y="200" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">0.25</text>
+    <text x="970" y="305" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">0.12</text>
+    <text x="970" y="410" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">0.00</text>
+    <text x="935" y="300" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle" transform="rotate(-90 935 300)">Target Density y_k</text>
+
+    <!-- X-axis -->
+    <line x1="980" y1="410" x2="1700" y2="410" stroke="#475569" stroke-width="1.5"/>
+    <text x="980" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">0</text>
+    <text x="1124" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">20</text>
+    <text x="1268" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">40</text>
+    <text x="1412" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">60</text>
+    <text x="1448" y="430" font-size="13" font-weight="bold" fill="#059669" text-anchor="middle">65</text>
+    <text x="1556" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">80</text>
+    <text x="1700" y="430" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">99</text>
+    <text x="1340" y="450" font-size="14" font-weight="bold" fill="#475569" text-anchor="middle">Discrete Age Bins (k &#8712; [0, 99])</text>
+
+    <!-- Bars & Curve -->
+    <rect x="980.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="987.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="994.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1001.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1008.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1016.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1023.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1030.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1037.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1044.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1052.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1059.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1066.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1073.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1080.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1088.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1095.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1102.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1109.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1116.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1124.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1131.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1138.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1145.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1152.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1160.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1167.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1174.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1181.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1188.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1196.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1203.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1210.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1217.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1224.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1232.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1239.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1246.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1253.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1260.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1268.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1275.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1282.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1289.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1296.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1304.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1311.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1318.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1325.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1332.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1340.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1347.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1354.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1361.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1368.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1376.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1383.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1390.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1397.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1404.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1412.0" y="405.6" width="7.2" height="4.4" fill="#34d399" rx="1"/><rect x="1419.2" y="392.2" width="7.2" height="17.8" fill="#34d399" rx="1"/><rect x="1426.4" y="357.6" width="7.2" height="52.4" fill="#10b981" rx="1"/><rect x="1433.6" y="296.7" width="7.2" height="113.3" fill="#10b981" rx="1"/><rect x="1440.8" y="230.0" width="7.2" height="180.0" fill="#059669" rx="1"/><rect x="1448.0" y="200.0" width="7.2" height="210.0" fill="#059669" rx="1"/><rect x="1455.2" y="230.0" width="7.2" height="180.0" fill="#059669" rx="1"/><rect x="1462.4" y="296.7" width="7.2" height="113.3" fill="#10b981" rx="1"/><rect x="1469.6" y="357.6" width="7.2" height="52.4" fill="#10b981" rx="1"/><rect x="1476.8" y="392.2" width="7.2" height="17.8" fill="#34d399" rx="1"/><rect x="1484.0" y="405.6" width="7.2" height="4.4" fill="#34d399" rx="1"/><rect x="1491.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1498.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1505.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1512.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1520.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1527.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1534.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1541.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1548.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1556.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1563.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1570.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1577.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1584.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1592.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1599.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1606.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1613.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1620.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1628.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1635.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1642.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1649.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1656.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1664.0" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1671.2" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1678.4" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1685.6" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><rect x="1692.8" y="409.0" width="7.2" height="2" fill="#cbd5e1"/><path d="M 983.6,410.0 L 990.8,410.0 L 998.0,410.0 L 1005.2,410.0 L 1012.4,410.0 L 1019.6,410.0 L 1026.8,410.0 L 1034.0,410.0 L 1041.2,410.0 L 1048.4,410.0 L 1055.6,410.0 L 1062.8,410.0 L 1070.0,410.0 L 1077.2,410.0 L 1084.4,410.0 L 1091.6,410.0 L 1098.8,410.0 L 1106.0,410.0 L 1113.2,410.0 L 1120.4,410.0 L 1127.6,410.0 L 1134.8,410.0 L 1142.0,410.0 L 1149.2,410.0 L 1156.4,410.0 L 1163.6,410.0 L 1170.8,410.0 L 1178.0,410.0 L 1185.2,410.0 L 1192.4,410.0 L 1199.6,410.0 L 1206.8,410.0 L 1214.0,410.0 L 1221.2,410.0 L 1228.4,410.0 L 1235.6,410.0 L 1242.8,410.0 L 1250.0,410.0 L 1257.2,410.0 L 1264.4,410.0 L 1271.6,410.0 L 1278.8,410.0 L 1286.0,410.0 L 1293.2,410.0 L 1300.4,410.0 L 1307.6,410.0 L 1314.8,410.0 L 1322.0,410.0 L 1329.2,410.0 L 1336.4,410.0 L 1343.6,410.0 L 1350.8,410.0 L 1358.0,410.0 L 1365.2,410.0 L 1372.4,410.0 L 1379.6,410.0 L 1386.8,410.0 L 1394.0,410.0 L 1401.2,409.9 L 1408.4,409.2 L 1415.6,405.6 L 1422.8,392.2 L 1430.0,357.6 L 1437.2,296.7 L 1444.4,230.0 L 1451.6,200.0 L 1458.8,230.0 L 1466.0,296.7 L 1473.2,357.6 L 1480.4,392.2 L 1487.6,405.6 L 1494.8,409.2 L 1502.0,409.9 L 1509.2,410.0 L 1516.4,410.0 L 1523.6,410.0 L 1530.8,410.0 L 1538.0,410.0 L 1545.2,410.0 L 1552.4,410.0 L 1559.6,410.0 L 1566.8,410.0 L 1574.0,410.0 L 1581.2,410.0 L 1588.4,410.0 L 1595.6,410.0 L 1602.8,410.0 L 1610.0,410.0 L 1617.2,410.0 L 1624.4,410.0 L 1631.6,410.0 L 1638.8,410.0 L 1646.0,410.0 L 1653.2,410.0 L 1660.4,410.0 L 1667.6,410.0 L 1674.8,410.0 L 1682.0,410.0 L 1689.2,410.0 L 1696.4,410.0" fill="none" stroke="#047857" stroke-width="2.5"/><text x="1451.6" y="192.0" font-size="14" font-weight="bold" fill="#059669" text-anchor="middle">Peak at y = 65 (y_target &#8776; 0.22)</text>
+
+    <!-- Key Advantages Cards -->
+    <g transform="translate(950, 472)">
+      <!-- Card 1: Gaussian Label Formula -->
+      <rect x="0" y="0" width="245" height="75" rx="8" ry="8" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.2"/>
+      <text x="12" y="22" font-size="13" font-weight="bold" fill="#065f46">&#10004; Ordinal Soft Labeling</text>
+      <text x="12" y="42" font-size="11.5" fill="#475569">y_k &#8733; exp( -(k - y)&#178; / 2&#963;&#178; )</text>
+      <text x="12" y="58" font-size="11.5" fill="#475569">Penalizes errors proportional to distance.</text>
+
+      <!-- Card 2: Soft-argmax Expectation -->
+      <rect x="260" y="0" width="245" height="75" rx="8" ry="8" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.2"/>
+      <text x="272" y="22" font-size="13" font-weight="bold" fill="#065f46">&#10004; Continuous Expectation</text>
+      <text x="272" y="42" font-size="11.5" fill="#475569">y_pred = E[age] = &#8721; k &#183; p(k)</text>
+      <text x="272" y="58" font-size="11.5" fill="#475569">Unlocks sub-bin decimal age resolution.</text>
+
+      <!-- Card 3: KL Divergence Loss -->
+      <rect x="520" y="0" width="260" height="75" rx="8" ry="8" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.2"/>
+      <text x="532" y="22" font-size="13" font-weight="bold" fill="#065f46">&#10004; KL Divergence Loss</text>
+      <text x="532" y="42" font-size="11.5" fill="#475569">L_KL = &#8721; y_k log( y_k / p_k )</text>
+      <text x="532" y="58" font-size="11.5" fill="#475569">Fully end-to-end gradient optimization.</text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- PANEL C: LOSS BEHAVIOR & PIPELINE WORKFLOW -->
+  <!-- ========================================================================= -->
+  <g transform="translate(0, 0)">
+    <!-- Left Box: Loss & Gradient Curve Comparison -->
+    <rect x="50" y="595" width="820" height="425" rx="12" ry="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8" filter="url(#shadow)"/>
+    
+    <rect x="50" y="595" width="820" height="42" rx="12" ry="12" fill="#e2e8f0"/>
+    <rect x="50" y="625" width="820" height="12" fill="#e2e8f0"/>
+    <text x="70" y="622" font-size="16" font-weight="bold" fill="#0f172a">(C) Loss Surface &amp; Distance Penalty Comparison</text>
+
+    <!-- Axes for Loss Plot -->
+    <line x1="140" y1="920" x2="140" y2="670" stroke="#475569" stroke-width="1.5"/>
+    <line x1="140" y1="920" x2="800" y2="920" stroke="#475569" stroke-width="1.5"/>
+    <line x1="470" y1="920" x2="470" y2="670" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3"/>
+
+    <text x="130" y="680" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">High</text>
+    <text x="130" y="920" font-size="12" font-weight="bold" fill="#475569" text-anchor="end">0.0</text>
+    <text x="95" y="795" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle" transform="rotate(-90 95 795)">Loss Penalty L</text>
+
+    <text x="140" y="942" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">-10</text>
+    <text x="305" y="942" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">-5</text>
+    <text x="470" y="942" font-size="13" font-weight="bold" fill="#0f172a" text-anchor="middle">0 (Target y)</text>
+    <text x="635" y="942" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">+5</text>
+    <text x="800" y="942" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">+10</text>
+    <text x="470" y="968" font-size="14" font-weight="bold" fill="#475569" text-anchor="middle">Prediction Error &#916;y = y_pred - y (Years)</text>
+
+    <!-- Render Curves -->
+    <path d="M 140.0,710.0 L 143.3,710.0 L 146.6,710.0 L 149.9,710.0 L 153.3,710.0 L 156.6,710.0 L 159.9,710.0 L 163.2,710.0 L 166.5,710.0 L 169.8,710.0 L 173.2,710.0 L 176.5,710.0 L 179.8,710.0 L 183.1,710.0 L 186.4,710.0 L 189.7,710.0 L 193.1,710.0 L 196.4,710.0 L 199.7,710.0 L 203.0,710.0 L 206.3,710.0 L 209.6,710.0 L 213.0,710.0 L 216.3,710.0 L 219.6,710.0 L 222.9,710.0 L 226.2,710.0 L 229.5,710.0 L 232.9,710.0 L 236.2,710.0 L 239.5,710.0 L 242.8,710.0 L 246.1,710.0 L 249.4,710.0 L 252.8,710.0 L 256.1,710.0 L 259.4,710.0 L 262.7,710.0 L 266.0,710.0 L 269.3,710.0 L 272.7,710.0 L 276.0,710.0 L 279.3,710.0 L 282.6,710.0 L 285.9,710.0 L 289.2,710.0 L 292.6,710.0 L 295.9,710.0 L 299.2,710.0 L 302.5,710.0 L 305.8,710.0 L 309.1,710.0 L 312.5,710.0 L 315.8,710.0 L 319.1,710.0 L 322.4,710.0 L 325.7,710.0 L 329.0,710.0 L 332.4,710.0 L 335.7,710.0 L 339.0,710.0 L 342.3,710.0 L 345.6,710.0 L 348.9,710.0 L 352.3,710.0 L 355.6,710.0 L 358.9,710.0 L 362.2,710.0 L 365.5,710.0 L 368.8,710.0 L 372.2,710.0 L 375.5,710.0 L 378.8,710.0 L 382.1,710.0 L 385.4,710.0 L 388.7,710.0 L 392.1,710.0 L 395.4,710.0 L 398.7,710.0 L 402.0,710.0 L 405.3,710.0 L 408.6,710.0 L 412.0,710.0 L 415.3,710.0 L 418.6,710.0 L 421.9,710.0 L 425.2,710.0 L 428.5,710.0 L 431.9,710.0 L 435.2,710.0 L 438.5,710.0 L 441.8,710.0 L 445.1,710.0 L 448.4,710.0 L 451.8,710.0 L 455.1,920.0 L 458.4,920.0 L 461.7,920.0 L 465.0,920.0 L 468.3,920.0 L 471.7,920.0 L 475.0,920.0 L 478.3,920.0 L 481.6,920.0 L 484.9,920.0 L 488.2,710.0 L 491.6,710.0 L 494.9,710.0 L 498.2,710.0 L 501.5,710.0 L 504.8,710.0 L 508.1,710.0 L 511.5,710.0 L 514.8,710.0 L 518.1,710.0 L 521.4,710.0 L 524.7,710.0 L 528.0,710.0 L 531.4,710.0 L 534.7,710.0 L 538.0,710.0 L 541.3,710.0 L 544.6,710.0 L 547.9,710.0 L 551.3,710.0 L 554.6,710.0 L 557.9,710.0 L 561.2,710.0 L 564.5,710.0 L 567.8,710.0 L 571.2,710.0 L 574.5,710.0 L 577.8,710.0 L 581.1,710.0 L 584.4,710.0 L 587.7,710.0 L 591.1,710.0 L 594.4,710.0 L 597.7,710.0 L 601.0,710.0 L 604.3,710.0 L 607.6,710.0 L 611.0,710.0 L 614.3,710.0 L 617.6,710.0 L 620.9,710.0 L 624.2,710.0 L 627.5,710.0 L 630.9,710.0 L 634.2,710.0 L 637.5,710.0 L 640.8,710.0 L 644.1,710.0 L 647.4,710.0 L 650.8,710.0 L 654.1,710.0 L 657.4,710.0 L 660.7,710.0 L 664.0,710.0 L 667.3,710.0 L 670.7,710.0 L 674.0,710.0 L 677.3,710.0 L 680.6,710.0 L 683.9,710.0 L 687.2,710.0 L 690.6,710.0 L 693.9,710.0 L 697.2,710.0 L 700.5,710.0 L 703.8,710.0 L 707.1,710.0 L 710.5,710.0 L 713.8,710.0 L 717.1,710.0 L 720.4,710.0 L 723.7,710.0 L 727.0,710.0 L 730.4,710.0 L 733.7,710.0 L 737.0,710.0 L 740.3,710.0 L 743.6,710.0 L 746.9,710.0 L 750.3,710.0 L 753.6,710.0 L 756.9,710.0 L 760.2,710.0 L 763.5,710.0 L 766.8,710.0 L 770.2,710.0 L 773.5,710.0 L 776.8,710.0 L 780.1,710.0 L 783.4,710.0 L 786.7,710.0 L 790.1,710.0 L 793.4,710.0 L 796.7,710.0 L 800.0,710.0" fill="none" stroke="#dc2626" stroke-width="3" stroke-dasharray="6,4"/><path d="M 140.0,710.0 L 143.3,714.2 L 146.6,718.4 L 149.9,722.5 L 153.3,726.5 L 156.6,730.6 L 159.9,734.6 L 163.2,738.5 L 166.5,742.4 L 169.8,746.3 L 173.2,750.1 L 176.5,753.9 L 179.8,757.6 L 183.1,761.3 L 186.4,764.9 L 189.7,768.5 L 193.1,772.1 L 196.4,775.6 L 199.7,779.1 L 203.0,782.5 L 206.3,785.9 L 209.6,789.3 L 213.0,792.6 L 216.3,795.9 L 219.6,799.1 L 222.9,802.3 L 226.2,805.4 L 229.5,808.5 L 232.9,811.6 L 236.2,814.6 L 239.5,817.5 L 242.8,820.5 L 246.1,823.4 L 249.4,826.2 L 252.8,829.0 L 256.1,831.8 L 259.4,834.5 L 262.7,837.1 L 266.0,839.8 L 269.3,842.4 L 272.7,844.9 L 276.0,847.4 L 279.3,849.9 L 282.6,852.3 L 285.9,854.7 L 289.2,857.0 L 292.6,859.3 L 295.9,861.5 L 299.2,863.7 L 302.5,865.9 L 305.8,868.0 L 309.1,870.1 L 312.5,872.1 L 315.8,874.1 L 319.1,876.1 L 322.4,878.0 L 325.7,879.9 L 329.0,881.7 L 332.4,883.5 L 335.7,885.2 L 339.0,886.9 L 342.3,888.6 L 345.6,890.2 L 348.9,891.7 L 352.3,893.3 L 355.6,894.8 L 358.9,896.2 L 362.2,897.6 L 365.5,899.0 L 368.8,900.3 L 372.2,901.5 L 375.5,902.8 L 378.8,904.0 L 382.1,905.1 L 385.4,906.2 L 388.7,907.3 L 392.1,908.3 L 395.4,909.3 L 398.7,910.2 L 402.0,911.1 L 405.3,911.9 L 408.6,912.7 L 412.0,913.5 L 415.3,914.2 L 418.6,914.9 L 421.9,915.5 L 425.2,916.1 L 428.5,916.7 L 431.9,917.2 L 435.2,917.7 L 438.5,918.1 L 441.8,918.5 L 445.1,918.8 L 448.4,919.1 L 451.8,919.4 L 455.1,919.6 L 458.4,919.7 L 461.7,919.9 L 465.0,920.0 L 468.3,920.0 L 471.7,920.0 L 475.0,920.0 L 478.3,919.9 L 481.6,919.7 L 484.9,919.6 L 488.2,919.4 L 491.6,919.1 L 494.9,918.8 L 498.2,918.5 L 501.5,918.1 L 504.8,917.7 L 508.1,917.2 L 511.5,916.7 L 514.8,916.1 L 518.1,915.5 L 521.4,914.9 L 524.7,914.2 L 528.0,913.5 L 531.4,912.7 L 534.7,911.9 L 538.0,911.1 L 541.3,910.2 L 544.6,909.3 L 547.9,908.3 L 551.3,907.3 L 554.6,906.2 L 557.9,905.1 L 561.2,904.0 L 564.5,902.8 L 567.8,901.5 L 571.2,900.3 L 574.5,899.0 L 577.8,897.6 L 581.1,896.2 L 584.4,894.8 L 587.7,893.3 L 591.1,891.7 L 594.4,890.2 L 597.7,888.6 L 601.0,886.9 L 604.3,885.2 L 607.6,883.5 L 611.0,881.7 L 614.3,879.9 L 617.6,878.0 L 620.9,876.1 L 624.2,874.1 L 627.5,872.1 L 630.9,870.1 L 634.2,868.0 L 637.5,865.9 L 640.8,863.7 L 644.1,861.5 L 647.4,859.3 L 650.8,857.0 L 654.1,854.7 L 657.4,852.3 L 660.7,849.9 L 664.0,847.4 L 667.3,844.9 L 670.7,842.4 L 674.0,839.8 L 677.3,837.1 L 680.6,834.5 L 683.9,831.8 L 687.2,829.0 L 690.6,826.2 L 693.9,823.4 L 697.2,820.5 L 700.5,817.5 L 703.8,814.6 L 707.1,811.6 L 710.5,808.5 L 713.8,805.4 L 717.1,802.3 L 720.4,799.1 L 723.7,795.9 L 727.0,792.6 L 730.4,789.3 L 733.7,785.9 L 737.0,782.5 L 740.3,779.1 L 743.6,775.6 L 746.9,772.1 L 750.3,768.5 L 753.6,764.9 L 756.9,761.3 L 760.2,757.6 L 763.5,753.9 L 766.8,750.1 L 770.2,746.3 L 773.5,742.4 L 776.8,738.5 L 780.1,734.6 L 783.4,730.6 L 786.7,726.5 L 790.1,722.5 L 793.4,718.4 L 796.7,714.2 L 800.0,710.0" fill="none" stroke="#059669" stroke-width="3.5"/>
+
+    <!-- Legend Box -->
+    <rect x="520" y="650" width="260" height="70" rx="6" ry="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <line x1="535" y1="670" x2="570" y2="670" stroke="#dc2626" stroke-width="3" stroke-dasharray="6,4"/>
+    <text x="580" y="674" font-size="12" font-weight="bold" fill="#991b1b">One-Hot + Cross Entropy</text>
+    <text x="580" y="687" font-size="10.5" fill="#475569">(Step penalty, no distance sensitivity)</text>
+
+    <line x1="535" y1="705" x2="570" y2="705" stroke="#059669" stroke-width="3.5"/>
+    <text x="580" y="709" font-size="12" font-weight="bold" fill="#065f46">Soft Label + KL Divergence</text>
+    <text x="580" y="722" font-size="10.5" fill="#475569">(Smooth, distance-proportional penalty)</text>
+
+    <!-- Right Box: Code Workflow Execution (Matching train_improved_ipw.py) -->
+    <rect x="930" y="595" width="820" height="425" rx="12" ry="12" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1.8" filter="url(#shadow)"/>
+    
+    <rect x="930" y="595" width="820" height="42" rx="12" ry="12" fill="#e0f2fe"/>
+    <rect x="930" y="625" width="820" height="12" fill="#e0f2fe"/>
+    <text x="950" y="622" font-size="16" font-weight="bold" fill="#0369a1">(D) End-to-End Implementation Flow in `train_improved_ipw.py`</text>
+
+    <!-- Workflow Steps Boxes -->
+    <!-- Step 1 -->
+    <rect x="960" y="650" width="760" height="70" rx="8" ry="8" fill="#ffffff" stroke="#7dd3fc" stroke-width="1.2"/>
+    <rect x="970" y="660" width="30" height="30" rx="15" ry="15" fill="#0284c7"/>
+    <text x="985" y="680" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="1015" y="672" font-size="14" font-weight="bold" fill="#0369a1">Target Generation: `generate_gaussian_label(age, sigma=1.0)`</text>
+    <text x="1015" y="692" font-size="12" fill="#475569">Computes dist = exp(-0.5 * ((x - age) / sigma)&#178;) and normalizes over 100 age classes.</text>
+
+    <path d="M 1340 720 L 1340 735" fill="none" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+    <!-- Step 2 -->
+    <rect x="960" y="735" width="760" height="70" rx="8" ry="8" fill="#ffffff" stroke="#7dd3fc" stroke-width="1.2"/>
+    <rect x="970" y="745" width="30" height="30" rx="15" ry="15" fill="#0284c7"/>
+    <text x="985" y="765" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="1015" y="757" font-size="14" font-weight="bold" fill="#0369a1">Model Output: `logits = model(xinput)` &#8594; [Batch, 100]</text>
+    <text x="1015" y="777" font-size="12" fill="#475569">Global-Local Transformer outputs 100 raw logits for Global and Local patch heads.</text>
+
+    <path d="M 1340 805 L 1340 820" fill="none" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+    <!-- Step 3 -->
+    <rect x="960" y="820" width="760" height="70" rx="8" ry="8" fill="#ffffff" stroke="#7dd3fc" stroke-width="1.2"/>
+    <rect x="970" y="830" width="30" height="30" rx="15" ry="15" fill="#0284c7"/>
+    <text x="985" y="850" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="1015" y="842" font-size="14" font-weight="bold" fill="#0369a1">Loss Optimization: `nn.KLDivLoss()(F.log_softmax(logits), soft_labels)`</text>
+    <text x="1015" y="862" font-size="12" fill="#475569">Optimizes log-probabilities against Gaussian soft targets using IPW reweighting.</text>
+
+    <path d="M 1340 890 L 1340 905" fill="none" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+    <!-- Step 4 -->
+    <rect x="960" y="905" width="760" height="70" rx="8" ry="8" fill="#ffffff" stroke="#7dd3fc" stroke-width="1.2"/>
+    <rect x="970" y="915" width="30" height="30" rx="15" ry="15" fill="#0284c7"/>
+    <text x="985" y="935" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">4</text>
+    <text x="1015" y="927" font-size="14" font-weight="bold" fill="#0369a1">Continuous Inference Decoding: `decode_age(logits) = (probs * bins).sum()`</text>
+    <text x="1015" y="947" font-size="12" fill="#475569">Calculates expectation E[age] over 100 bins for high-precision continuous age output.</text>
+  </g>
+</svg>
